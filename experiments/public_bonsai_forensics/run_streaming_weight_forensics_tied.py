@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Tied-head-aware entry point for the public Bonsai 1.7B forensics.
+"""Tied-head-aware streaming public Bonsai forensics.
 
-The stock Qwen checkpoint serializes `lm_head.weight`, while the public Bonsai
-unpacked checkpoint omits it because the output head is tied to token embeddings.
-The duplicate base tensor is removed before cross-checkpoint sampling; the shared
-embedding codebook remains in the analysis.
+The base checkpoint serializes `lm_head.weight`, while the public Bonsai
+checkpoints tie it to token embeddings. The duplicate base tensor is removed.
+This entry point also adds conditional binary/ternary code-lineage statistics.
 """
 from __future__ import annotations
 
@@ -16,6 +15,7 @@ import time
 from pathlib import Path
 
 import pandas as pd
+import torch
 
 
 HERE = Path(__file__).resolve().parent
@@ -26,6 +26,79 @@ if SPEC is None or SPEC.loader is None:
     raise ImportError("cannot load streaming forensic core")
 core = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(core)
+
+
+def safe_fraction(numerator: torch.Tensor, denominator: torch.Tensor) -> float:
+    value = int(denominator.sum())
+    if value == 0:
+        return float("nan")
+    return float(numerator.sum().float() / value)
+
+
+def analyze_tensor_extended(name: str, item: dict):
+    metrics = core.analyze_tensor(name, item)
+    base = item["base"].float()
+    binary = item["binary"].float()
+    ternary = item["ternary"].float()
+
+    base_sign = torch.where(base >= 0, 1.0, -1.0)
+    binary_codes = torch.where(binary >= 0, 1.0, -1.0)
+    binary_flip = binary_codes != base_sign
+
+    ternary_abs = ternary.abs()
+    raw_nonzero = ternary_abs > 0
+    ternary_scale = (
+        (ternary_abs * raw_nonzero).sum(dim=1)
+        / raw_nonzero.sum(dim=1).clamp_min(1)
+    ).clamp_min(1e-12)
+    normalized = ternary / ternary_scale[:, None]
+    ternary_codes = torch.where(
+        normalized > 0.5,
+        1.0,
+        torch.where(normalized < -0.5, -1.0, 0.0),
+    )
+    ternary_zero = ternary_codes == 0
+    ternary_nonzero = ~ternary_zero
+    intersection = binary_flip & ternary_zero
+    union = binary_flip | ternary_zero
+
+    metrics.update(
+        {
+            "binary_flip_given_ternary_zero": safe_fraction(
+                binary_flip & ternary_zero, ternary_zero
+            ),
+            "binary_flip_given_ternary_nonzero": safe_fraction(
+                binary_flip & ternary_nonzero, ternary_nonzero
+            ),
+            "ternary_zero_given_binary_flip": safe_fraction(
+                ternary_zero & binary_flip, binary_flip
+            ),
+            "binary_base_agreement_on_ternary_zero": safe_fraction(
+                (binary_codes == base_sign) & ternary_zero, ternary_zero
+            ),
+            "binary_base_agreement_on_ternary_nonzero": safe_fraction(
+                (binary_codes == base_sign) & ternary_nonzero, ternary_nonzero
+            ),
+            "binary_flip_ternary_zero_jaccard": safe_fraction(
+                intersection, union
+            ),
+            "ternary_nonzero_sign_disagreement_binary": safe_fraction(
+                (binary_codes != ternary_codes) & ternary_nonzero,
+                ternary_nonzero,
+            ),
+            "ternary_sign_flip_given_nonzero": safe_fraction(
+                (ternary_codes != base_sign) & ternary_nonzero,
+                ternary_nonzero,
+            ),
+        }
+    )
+    if intersection.any():
+        metrics["joint_flip_zero_base_magnitude_percentile"] = core.percentile_rank(
+            base.abs(), intersection
+        )
+    else:
+        metrics["joint_flip_zero_base_magnitude_percentile"] = float("nan")
+    return metrics
 
 
 def main() -> None:
@@ -63,7 +136,7 @@ def main() -> None:
         )
 
         rows = [
-            core.analyze_tensor(name, item)
+            analyze_tensor_extended(name, item)
             for name, item in sorted(samples.items())
         ]
         frame = pd.DataFrame(rows)
