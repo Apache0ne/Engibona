@@ -1,0 +1,34 @@
+name: code-structure-forensics
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - ci-public-weight-forensics-v6
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - name: Install CPU analysis dependencies
+        run: |
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu torch
+          python -m pip install safetensors huggingface_hub requests numpy pandas
+      - name: Test simple threshold explanations of released codes
+        run: |
+          python experiments/public_bonsai_forensics/run_code_structure_forensics.py \
+            --groups-per-tensor 512 \
+            --output-dir code_structure_forensics
+      - uses: actions/upload-artifact@v4
+        with:
+          name: code-structure-forensics
+          path: code_structure_forensics
+          if-no-files-found: error
