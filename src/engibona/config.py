@@ -11,7 +11,13 @@ class QuantMode(str, Enum):
 
 @dataclass(slots=True)
 class EngibonaConfig:
-    """Evidence-selected grouped binary/ternary recovery settings."""
+    """Evidence-selected grouped binary/ternary recovery settings.
+
+    Plain construction is the release-matched profile: it prioritizes agreement
+    with direct public Bonsai weight geometry. Use `behavior_maximizing()` to
+    make every embedding code trainable when the target is miniature-task
+    recovery rather than released-checkpoint lineage.
+    """
 
     mode: QuantMode = QuantMode.TERNARY
     group_size: int = 128
@@ -36,15 +42,14 @@ class EngibonaConfig:
     ternary_zero_target: float = 0.35
     ternary_zero_weight: float = 0.0
 
-    # Direct public-weight forensics found that the released binary embedding is
-    # almost exactly sign + mean-absolute g128 projection, while the ternary
-    # embedding changes zero assignments but preserves every sampled nonzero
-    # sign. These defaults model that module-specific behavior.
+    # Direct public-weight forensics found an almost exact binary sign/absmean
+    # embedding and a ternary embedding with trainable zeros/scales but preserved
+    # nonzero signs. These are the release-matched defaults.
     binary_embedding_strategy: str = "frozen_ptq"
     ternary_embedding_strategy: str = "sign_locked_recovery"
 
     # Pure teacher KL is the selected behavior-preservation default. CE and
-    # hidden/block terms remain opt-in tradeoffs.
+    # hidden/block terms remain explicit Pareto tradeoffs.
     ce_weight: float = 0.00
     kd_weight: float = 1.00
     window_reconstruction_weight: float = 0.00
@@ -58,6 +63,51 @@ class EngibonaConfig:
     enable_cka: bool = False
     enable_state_loss: bool = False
     enable_fisher_code_refinement: bool = False
+
+    @classmethod
+    def release_matched(
+        cls,
+        mode: QuantMode | str = QuantMode.TERNARY,
+        **overrides,
+    ) -> "EngibonaConfig":
+        """Prioritize matching released Bonsai code/scale fingerprints."""
+        values = {
+            "mode": QuantMode(mode),
+            "binary_embedding_strategy": "frozen_ptq",
+            "ternary_embedding_strategy": "sign_locked_recovery",
+            "ce_weight": 0.0,
+            "kd_weight": 1.0,
+            "hidden_mse_weight": 0.0,
+            "window_reconstruction_weight": 0.0,
+            "export_strategy": "trained",
+        }
+        values.update(overrides)
+        return cls(**values)
+
+    @classmethod
+    def behavior_maximizing(
+        cls,
+        mode: QuantMode | str = QuantMode.TERNARY,
+        **overrides,
+    ) -> "EngibonaConfig":
+        """Allow embedding sign/code movement for task-specific recovery.
+
+        This profile can improve small-model teacher KL, especially at greater
+        depth, but it intentionally does not match the released binary embedding
+        fingerprint.
+        """
+        values = {
+            "mode": QuantMode(mode),
+            "binary_embedding_strategy": "train",
+            "ternary_embedding_strategy": "train",
+            "ce_weight": 0.0,
+            "kd_weight": 1.0,
+            "hidden_mse_weight": 0.0,
+            "window_reconstruction_weight": 0.0,
+            "export_strategy": "trained",
+        }
+        values.update(overrides)
+        return cls(**values)
 
     def validate(self) -> None:
         if self.group_size <= 0:
