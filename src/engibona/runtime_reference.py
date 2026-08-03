@@ -19,11 +19,12 @@ class DecodedPackedWeight:
 def decode_packed_weight(item: dict[str, Any]) -> DecodedPackedWeight:
     """Decode one Engibona research-format tensor exactly.
 
-    This is a correctness reference, not an optimized low-bit kernel. It proves
-    that the packed codes and FP16 scales reconstruct the trained hard weight
-    without a latent or residual tensor.
+    This is a correctness reference, not an optimized low-bit kernel.
     """
     shape = tuple(int(value) for value in item["shape"])
+    group_size = int(item["group_size"])
+    if group_size <= 0:
+        raise ValueError("group_size must be positive")
     count = 1
     for value in shape:
         count *= value
@@ -42,11 +43,9 @@ def decode_packed_weight(item: dict[str, Any]) -> DecodedPackedWeight:
     last = shape[-1]
     leading = count // last
     code_rows = codes.reshape(leading, last).float()
-    scale_rows = scales.reshape(leading, scales.shape[-1])
-    group_size = (last + scale_rows.shape[-1] - 1) // scale_rows.shape[-1]
+    expected_groups = (last + group_size - 1) // group_size
+    scale_rows = scales.reshape(leading, expected_groups)
     group_index = torch.arange(last, device=code_rows.device) // group_size
-    if int(group_index.max()) >= scale_rows.shape[-1]:
-        raise ValueError("scale layout cannot cover packed codes")
     weight = (code_rows * scale_rows[:, group_index]).reshape(shape)
     return DecodedPackedWeight(codes=codes, scales=scales, weight=weight)
 
