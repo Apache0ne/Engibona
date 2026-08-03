@@ -20,10 +20,12 @@ def test_export_payload_contains_only_packed_codes_scales_and_metadata() -> None
         item = export_packed(model, handle.name, config)["tensors"]["0"]
     assert set(item) == {
         "shape",
+        "group_size",
         "encoding",
         "padding_symbols",
         "packed_codes",
         "scales_fp16",
     }
+    assert item["group_size"] == 128
     assert item["packed_codes"].dtype == torch.uint8
     assert item["scales_fp16"].dtype == torch.float16
