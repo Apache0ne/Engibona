@@ -1,8 +1,14 @@
 import importlib.util
 from pathlib import Path
 
+import pytest
 import torch
 
+
+pytest.importorskip("pandas")
+pytest.importorskip("requests")
+pytest.importorskip("huggingface_hub")
+pytest.importorskip("safetensors")
 
 SCRIPT = (
     Path(__file__).resolve().parents[1]
@@ -43,7 +49,7 @@ def test_naive_binary_release_has_exact_expected_fingerprint() -> None:
 def test_code_reassignment_is_detected() -> None:
     torch.manual_seed(1)
     base = torch.randn(32, 128)
-    binary_codes, binary_scales, binary = forensics.naive_binary(base)
+    _, _, binary = forensics.naive_binary(base)
     binary = binary.clone()
     binary[:, :16] *= -1
     _, _, ternary = forensics.naive_ternary(base)
