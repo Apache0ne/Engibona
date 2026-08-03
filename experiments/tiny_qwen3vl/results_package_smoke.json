@@ -1,0 +1,44 @@
+{
+  "provenance": "Package-integrated CPU smoke using Engibona trained-state modules",
+  "arguments": {
+    "seeds": 1,
+    "fp_steps": 40,
+    "recovery_steps": 30,
+    "batch": 8,
+    "threads": 5
+  },
+  "architecture": {
+    "parameters": 328448,
+    "vocab_size": 128,
+    "hidden_size": 128,
+    "intermediate_size": 256,
+    "layers": 2,
+    "query_heads": 4,
+    "kv_heads": 2,
+    "head_dim": 32,
+    "rope_theta": 5000000.0,
+    "rms_norm_eps": 1e-6,
+    "group_size": 128
+  },
+  "methods": {
+    "fp32": {
+      "ce": 4.975015163421631,
+      "accuracy": 0.017333984375,
+      "teacher_kl": 2.432557266729418e-9,
+      "hidden_cosine": 1.0
+    },
+    "naive_absmean": {
+      "ce": 4.950813293457031,
+      "accuracy": 0.008544921875,
+      "teacher_kl": 0.15066814422607422,
+      "hidden_cosine": 0.7590487599372864
+    },
+    "hard_ste_kd_trained_state": {
+      "ce": 4.921628475189209,
+      "accuracy": 0.011474609375,
+      "teacher_kl": 0.09782364219427109,
+      "hidden_cosine": 0.7821429371833801
+    }
+  },
+  "seconds": 4.803555011749268
+}
