@@ -249,25 +249,44 @@ def replace_linear_modules(
     config: EngibonaConfig,
     include_embeddings: bool = True,
     exclude_names: tuple[str, ...] = ("norm",),
+    preserve_tied_weights: bool = True,
 ) -> dict[str, nn.Module]:
-    """Replace matrix-heavy modules, including embeddings by default."""
-    replaced: dict[str, nn.Module] = {}
+    """Replace matrix-heavy modules and preserve shared embedding/head weights."""
+    from .modules_tied import TiedGroupQuantizedLMHead
 
-    def visit(parent: nn.Module, prefix: str = "") -> None:
+    replaced: dict[str, nn.Module] = {}
+    tied_embeddings: dict[int, GroupQuantizedEmbedding] = {}
+
+    def wrap_embeddings(parent: nn.Module, prefix: str = "") -> None:
+        for name, child in list(parent.named_children()):
+            full = f"{prefix}.{name}" if prefix else name
+            if any(token in full.lower() for token in exclude_names):
+                continue
+            if include_embeddings and isinstance(child, nn.Embedding):
+                source_parameter_id = id(child.weight)
+                wrapped = GroupQuantizedEmbedding(child, config)
+                setattr(parent, name, wrapped)
+                tied_embeddings[source_parameter_id] = wrapped
+                replaced[full] = wrapped
+            else:
+                wrap_embeddings(child, full)
+
+    def wrap_linears(parent: nn.Module, prefix: str = "") -> None:
         for name, child in list(parent.named_children()):
             full = f"{prefix}.{name}" if prefix else name
             if any(token in full.lower() for token in exclude_names):
                 continue
             if isinstance(child, nn.Linear):
-                wrapped = GroupQuantizedLinear(child, config)
+                shared = tied_embeddings.get(id(child.weight))
+                if preserve_tied_weights and shared is not None:
+                    wrapped = TiedGroupQuantizedLMHead(shared)
+                else:
+                    wrapped = GroupQuantizedLinear(child, config)
                 setattr(parent, name, wrapped)
                 replaced[full] = wrapped
-            elif include_embeddings and isinstance(child, nn.Embedding):
-                wrapped = GroupQuantizedEmbedding(child, config)
-                setattr(parent, name, wrapped)
-                replaced[full] = wrapped
-            else:
-                visit(child, full)
+            elif not isinstance(child, GroupQuantizedEmbedding):
+                wrap_linears(child, full)
 
-    visit(model)
+    wrap_embeddings(model)
+    wrap_linears(model)
     return replaced
