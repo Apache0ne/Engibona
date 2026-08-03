@@ -1,99 +1,124 @@
 # Confidence and evidence boundary
 
-## Directly constrained by public Bonsai information
+## Direct public constraints
 
-- pretrained Qwen checkpoint as the starting point;
-- unchanged model architecture;
-- exact binary or ternary language weights;
+- transformation begins from a pretrained Qwen checkpoint;
+- model architecture remains unchanged;
+- language weights end in exact binary or ternary form;
 - contiguous group size 128;
 - one FP16 scale per group;
-- low-bit coverage across embeddings and matrix-heavy language components;
-- higher-precision activations, normalization, and sensitive accumulations;
-- packed weights consumed directly by custom kernels;
+- embeddings and matrix-heavy language components are covered;
+- normalization, activations, and sensitive accumulation remain higher precision;
+- packed weights are consumed directly by low-bit kernels;
 - no disclosed inference-time FP16 language residual.
 
-## Confidence raised by direct Engibona experiments
+## Clean official-architecture evidence
 
-A two-layer, four-query-head, two-KV-head Qwen3-VL-text-topology model was trained and transformed on CPU over three independent seeds. This does not identify PrismML's private method, but it tests competing math on the same operator structure.
+A GitHub-hosted runner executed Engibona against Hugging Face's public `Qwen3VLTextModel` at two and four layers, with three independent seeds at each depth. The run used tied embeddings/LM head, official Qwen3-VL attention and MRoPE classes, and exact g128 binary or ternary states.
 
-### High confidence for the Engibona binary default
+All unit tests passed. Every low-bit result passed exact-alphabet checks.
 
-- exact hard binary forward values during recovery;
-- trainable positive g128 scales;
-- teacher-behavior recovery rather than local weight error alone;
-- meaningful code movement from initial signs;
-- inclusion of embeddings and LM head;
-- preservation of trained exact codes and scales at export;
-- optional Fisher/gradient-informed exact sign refinement with real-loss line search.
+### Findings that replicated at both depths and every seed
 
-Exact-hard recovery beat naive projection, covariance-coordinate PTQ, smooth recovery, and staged recovery on CE and teacher KL for all three seeds. Fisher refinement improved CE and KL for all three seeds.
+- functional recovery beat naive projection for binary weights;
+- functional recovery beat naive projection for ternary weights;
+- exact learned scales and codes remained valid after recovery;
+- tied embedding/head quantization worked as one shared state;
+- recovery gains persisted as depth increased.
 
-### Explicitly falsified as universal defaults
+### Binary surrogate result
 
-- smooth continuation as the strongest binary path;
-- local activation-covariance projection as the final export objective;
-- recomputing scales analytically from the latent carrier after global recovery;
-- coordinate re-projection after teacher-guided recovery;
-- assuming lower local quadratic reconstruction error means better full-model behavior.
+Exact-hard and categorical binary recovery were nearly tied:
 
-## Current method confidence by component
+| Depth | Naive KL | Hard KL | Categorical KL |
+|---:|---:|---:|---:|
+| 2 | 0.31115 | **0.17731** | 0.17838 |
+| 4 | 0.12017 | **0.05441** | 0.05466 |
 
-| Component | Current Engibona status | Evidence level |
-|---|---|---|
-| Exact g128 code + FP16 scale | Required | Direct public constraint |
-| Binary exact-hard forward | Default | Three-seed architecture-faithful experiment |
-| Learned positive binary scales | Default | Three-seed experiment and gradient test |
-| Teacher KL / functional recovery | Default objective component | Strong experiment + broad low-bit evidence |
-| Trained-state export | Default | Direct finalization ablation |
-| Fisher discrete sign refinement | Optional | Improved CE/KL on all three seeds |
-| PTQ sign initialization | Default initializer | Strong mathematical and empirical support |
-| Local metric projection | PTQ/diagnostic only | Useful locally; rejected as finalizer |
-| Ternary CAT-Q-style transition | Default ternary hypothesis | Literature-supported; deep ternary test pending |
-| Ternary zero-ratio controls | Available | Failure prevention; deep test pending |
-| Sliding-window/block reconstruction | Intended trainer objective | Strong literature support; package-scale test pending |
-| Dynamic recovery curriculum | Optional | Indirect GRACE/PADP support only |
-| Recurrent/linear-attention state loss | Optional | Architecture-motivated, not yet isolated |
-| CKA geometry loss | Optional | Plausible, not directly tied to Bonsai |
-| ADMM/proximal solver | Research option | Private solver remains unknown |
-| Learned rotations | Disabled by default | Insufficient Bonsai-specific evidence |
+The strongest conclusion is therefore whole-model functional recovery, not that one surrogate gradient is uniquely correct. Exact-hard remains the default because its forward pass matches deployment at every step.
 
-## Important distinction
+### Ternary surrogate result
 
-The experiment increases confidence in what Engibona should implement. It does **not** make the following PrismML details known:
+| Depth | Naive KL | Hard KL | CAT-Q KL | Categorical KL |
+|---:|---:|---:|---:|---:|
+| 2 | 0.21809 | **0.13002** | 0.13188 | 0.13517 |
+| 4 | 0.10019 | 0.04448 | **0.04133** | 0.05203 |
+
+No universal ternary winner exists under the current budget. Exact-hard was best at two layers; CAT-Q was best at four layers and had the strongest recovered hidden alignment. The selected ternary default remains soft CAT-Q assignment followed by sustained exact-hard recovery.
+
+## Direct miniature evidence beyond the official matrix
+
+The hand-written Qwen3-VL-topology miniature supplied additional controlled tests:
+
+- trained-state export decisively beat post-recovery covariance re-projection;
+- empirical-Fisher sign ranking strongly predicted real teacher-loss improvements;
+- selected exact Hessian diagonals nearly perfectly predicted measured individual sign-flip changes;
+- embeddings were the most sensitive matrix component;
+- mixed CE/KD/hidden objectives preserved different aspects of behavior;
+- four-layer recovery replicated the two-layer recovery advantage.
+
+These results are useful method-selection evidence but are distinct from the clean official-architecture run.
+
+## Current method confidence
+
+The percentages below describe confidence in the **Engibona public reconstruction choice**, not probability of exact PrismML internal identity.
+
+| Component | Confidence | Status |
+|---|---:|---|
+| Exact g128 code + FP16 scale | **>99.9%** | Required public format |
+| Whole-model functional recovery after initialization | **99%+** | Replicated at 2/4 layers and all official-architecture seeds |
+| Preserve trained codes/scales at export | **99%** | Direct finalization ablation |
+| Positive learned group scales | **98–99%** | Gradient, recovery, and export tests |
+| Tied embedding/head state preservation | **>99%** | Exact alias, gradient, and export tests |
+| Exact-hard binary as default | **92–97%** | Strong, but categorical was nearly tied |
+| Binary categorical as viable alternative | **85–95%** | Nearly identical official-matrix behavior |
+| Hybrid soft-to-hard ternary path | **88–96%** | Depth-dependent official results |
+| One universal ternary surrogate | **below 30%** | Falsified by depth-dependent winners |
+| Teacher KL as central recovery loss | **95–99%** | Consistent behavior recovery evidence |
+| Mixed CE/KD/hidden objective | **87–95%** | Complementary metric ablation |
+| Module-sensitive recovery budgets | **95–99%** | Large measured sensitivity spread |
+| Empirical-Fisher discrete refinement | **94–98%** | Multi-module predictor and improvement tests |
+| Real-loss validation of proposed code moves | **>99%** | Required to prevent approximation error |
+| Block/global recovery as depth grows | **94–98%** | 2/4-layer replication |
+| Local covariance projection as initializer | **70–88%** | Useful local method, not finalizer |
+| Local covariance projection as final export oracle | **below 5%** | Directly degraded recovered behavior |
+| Dynamic curriculum as mandatory | **below 50%** | Small mixed evidence only |
+| Learned rotations as mandatory | **below 20%** | No Bonsai-specific direct evidence |
+| One-pass sign/threshold projection as full method | **below 0.1%** | Rejected by every recovery comparison |
+| Inference-time latent/FP residual | **below 0.1%** | Format-incompatible and export-tested absent |
+
+## Clean-run provenance
+
+```text
+workflow run: 30859347649
+artifact ID: 8873796012
+artifact SHA-256: 07bb77f7c03bc8b9740c7f0bb35b56915bf16d11598d6a61e44d9057d460fabe
+```
+
+## Irreducible unknowns
+
+Public checkpoints and experiments cannot uniquely identify PrismML's:
 
 - optimizer family;
-- exact learning rates;
-- training steps or token count;
-- calibration/recovery corpus;
+- learning-rate schedule;
+- number of steps or recovery tokens;
+- data mixture;
 - loss coefficients;
-- whether PrismML used an STE;
-- exact layer order or distributed strategy;
-- exact private code optimizer.
+- exact layer ordering;
+- distributed implementation;
+- private discrete solver;
+- whether its internal gradient surrogate matches Engibona.
 
-## Preserved baseline
+These require direct source, configuration, logs, optimizer state, or intermediate checkpoints.
 
-The pre-ablation implementation is preserved on branch:
+## Highest-value remaining tests
 
-```text
-baseline-metric-projection-v1
-```
+1. Longer official-architecture ternary tests with several soft-to-hard transition points.
+2. Official-architecture loss matrix: KL, CE, hidden, block-output, and combinations.
+3. Student-input versus teacher-input block reconstruction.
+4. Sensitivity-proportional versus uniform recovery budgets.
+5. Multi-length recovery sequences.
+6. Public unpacked Bonsai weight forensics across 1.7B, 4B, and 8B.
+7. Packed-kernel parity against dequantized reference execution.
 
-The evidence-updated work is developed on:
-
-```text
-tiny-qwen3vl-evidence-v2
-```
-
-## Highest-value next tests
-
-1. Repeat the full ablation for ternary weights, including zero-ratio collapse and threshold/scale interactions.
-2. Expand the miniature from two to four decoder layers to test accumulated error.
-3. Isolate q/k/v/o, MLP, embedding, and LM-head sensitivity.
-4. Compare teacher KL, hidden MSE, block reconstruction, CKA, and combinations under equal compute.
-5. Compare hard STE against projected gradient, proximal updates, and alternating discrete/scale updates under equal budget.
-6. Test empirical Fisher diagonal, activation covariance, K-FAC approximations, and exact small-model Hessian-vector products.
-7. Run public-weight forensics against unpacked Bonsai checkpoints.
-8. Replicate released sign, zero-mask, and scale fingerprints across 1.7B, 4B, 8B, and 27B.
-9. Inspect any future PrismML converter, training log, optimizer state, patent, or intermediate checkpoint.
-
-See [`TINY_QWEN3VL_CPU_ABLATION.md`](TINY_QWEN3VL_CPU_ABLATION.md) for the measured statistics and finalization failure analysis.
+See [`OFFICIAL_QWEN3VL_METHOD_MATRIX.md`](OFFICIAL_QWEN3VL_METHOD_MATRIX.md) and the raw JSON for seed-level results.
