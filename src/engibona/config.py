@@ -36,9 +36,15 @@ class EngibonaConfig:
     ternary_zero_target: float = 0.35
     ternary_zero_weight: float = 0.0
 
-    # Clean official-architecture loss ablations selected pure teacher KL for
-    # behavior-preserving conversion. CE and hidden losses remain opt-in for
-    # domain adaptation and state-fidelity tradeoffs.
+    # Direct public-weight forensics found that the released binary embedding is
+    # almost exactly sign + mean-absolute g128 projection, while the ternary
+    # embedding changes zero assignments but preserves every sampled nonzero
+    # sign. These defaults model that module-specific behavior.
+    binary_embedding_strategy: str = "frozen_ptq"
+    ternary_embedding_strategy: str = "sign_locked_recovery"
+
+    # Pure teacher KL is the selected behavior-preservation default. CE and
+    # hidden/block terms remain opt-in tradeoffs.
     ce_weight: float = 0.00
     kd_weight: float = 1.00
     window_reconstruction_weight: float = 0.00
@@ -62,6 +68,16 @@ class EngibonaConfig:
             raise ValueError(f"unsupported relaxation: {self.relaxation}")
         if self.export_strategy not in {"trained", "metric_reproject"}:
             raise ValueError(f"unsupported export_strategy: {self.export_strategy}")
+        if self.binary_embedding_strategy not in {"frozen_ptq", "train"}:
+            raise ValueError(
+                f"unsupported binary_embedding_strategy: {self.binary_embedding_strategy}"
+            )
+        if self.ternary_embedding_strategy not in {
+            "sign_locked_recovery", "train", "frozen_ptq"
+        }:
+            raise ValueError(
+                f"unsupported ternary_embedding_strategy: {self.ternary_embedding_strategy}"
+            )
         if not 0.0 <= self.compression_fraction <= 1.0:
             raise ValueError("compression_fraction must be in [0, 1]")
         if not 0.0 <= self.hard_recovery_start <= 1.0:
