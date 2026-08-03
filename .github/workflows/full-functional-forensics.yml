@@ -14,6 +14,7 @@ jobs:
     env:
       HF_HUB_DISABLE_TELEMETRY: "1"
       TOKENIZERS_PARALLELISM: "false"
+      PYTORCH_ALLOC_CONF: "expandable_segments:True"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -29,11 +30,11 @@ jobs:
         run: |
           free -h
           df -h
-      - name: Compare full public models
+      - name: Compare full public models in BF16
         run: |
-          python experiments/public_bonsai_forensics/run_full_model_functional_forensics.py \
+          python experiments/public_bonsai_forensics/run_full_model_functional_forensics_bf16.py \
             --threads 4 \
-            --max-length 48 \
+            --max-length 32 \
             --output full_model_functional_forensics.json
       - name: Show final resources
         if: always()
