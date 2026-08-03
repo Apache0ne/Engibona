@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""Cluster-bootstrap uncertainty for public Bonsai weight forensics.
-
-Tensors, rather than individual weights, are resampled. This avoids reporting
-artificially tiny intervals from millions of highly correlated weights inside
-the same matrix.
-"""
+"""Tensor-cluster bootstrap uncertainty for public Bonsai forensics."""
 from __future__ import annotations
 
 import argparse
@@ -29,40 +24,35 @@ DEFAULT_METRICS = [
 ]
 
 
-def weighted_mean(frame: pd.DataFrame, column: str) -> float:
-    values = pd.to_numeric(frame[column], errors="coerce").to_numpy(float)
-    weights = pd.to_numeric(frame["groups_sampled"], errors="coerce").to_numpy(float)
+def arrays(frame: pd.DataFrame, column: str):
+    values = pd.to_numeric(frame[column], errors="coerce").to_numpy(np.float64)
+    weights = pd.to_numeric(frame["groups_sampled"], errors="coerce").to_numpy(np.float64)
+    modules = frame["module"].astype(str).to_numpy()
     mask = np.isfinite(values) & np.isfinite(weights) & (weights > 0)
-    if not mask.any():
-        return float("nan")
-    return float(np.average(values[mask], weights=weights[mask]))
+    return values[mask], weights[mask], modules[mask]
 
 
-def bootstrap(
-    frame: pd.DataFrame,
-    column: str,
-    iterations: int,
-    seed: int,
-) -> dict[str, float]:
-    clean = frame.loc[
-        pd.to_numeric(frame[column], errors="coerce").notna()
-        & pd.to_numeric(frame["groups_sampled"], errors="coerce").notna()
-    ].reset_index(drop=True)
-    if clean.empty:
+def interval(samples: np.ndarray, estimate: float, **metadata) -> dict[str, float]:
+    return {
+        "estimate": float(estimate),
+        "low_95": float(np.quantile(samples, 0.025)),
+        "high_95": float(np.quantile(samples, 0.975)),
+        "bootstrap_standard_error": float(samples.std(ddof=1)),
+        **metadata,
+    }
+
+
+def bootstrap(frame: pd.DataFrame, column: str, iterations: int, seed: int):
+    values, weights, _ = arrays(frame, column)
+    if values.size == 0:
         return {"estimate": float("nan"), "low_95": float("nan"), "high_95": float("nan")}
     generator = np.random.default_rng(seed)
-    values = np.empty(iterations, dtype=np.float64)
-    count = len(clean)
-    for index in range(iterations):
-        sampled = clean.iloc[generator.integers(0, count, size=count)]
-        values[index] = weighted_mean(sampled, column)
-    return {
-        "estimate": weighted_mean(clean, column),
-        "low_95": float(np.quantile(values, 0.025)),
-        "high_95": float(np.quantile(values, 0.975)),
-        "bootstrap_standard_error": float(values.std(ddof=1)),
-        "tensor_clusters": int(count),
-    }
+    count = values.size
+    indices = generator.integers(0, count, size=(iterations, count))
+    selected_weights = weights[indices]
+    samples = (values[indices] * selected_weights).sum(axis=1) / selected_weights.sum(axis=1)
+    estimate = np.average(values, weights=weights)
+    return interval(samples, estimate, tensor_clusters=int(count))
 
 
 def stratified_module_bootstrap(
@@ -70,30 +60,31 @@ def stratified_module_bootstrap(
     column: str,
     iterations: int,
     seed: int,
-) -> dict[str, float]:
-    clean = frame.loc[
-        pd.to_numeric(frame[column], errors="coerce").notna()
-        & pd.to_numeric(frame["groups_sampled"], errors="coerce").notna()
-    ].reset_index(drop=True)
-    if clean.empty:
+):
+    values, weights, modules = arrays(frame, column)
+    if values.size == 0:
         return {"estimate": float("nan"), "low_95": float("nan"), "high_95": float("nan")}
-    groups = [group.reset_index(drop=True) for _, group in clean.groupby("module")]
     generator = np.random.default_rng(seed)
-    values = np.empty(iterations, dtype=np.float64)
-    for iteration in range(iterations):
-        pieces = []
-        for group in groups:
-            count = len(group)
-            pieces.append(group.iloc[generator.integers(0, count, size=count)])
-        values[iteration] = weighted_mean(pd.concat(pieces, ignore_index=True), column)
-    return {
-        "estimate": weighted_mean(clean, column),
-        "low_95": float(np.quantile(values, 0.025)),
-        "high_95": float(np.quantile(values, 0.975)),
-        "bootstrap_standard_error": float(values.std(ddof=1)),
-        "module_strata": int(len(groups)),
-        "tensor_clusters": int(len(clean)),
-    }
+    numerator = np.zeros(iterations, dtype=np.float64)
+    denominator = np.zeros(iterations, dtype=np.float64)
+    unique_modules = np.unique(modules)
+    for module in unique_modules:
+        mask = modules == module
+        module_values = values[mask]
+        module_weights = weights[mask]
+        count = module_values.size
+        indices = generator.integers(0, count, size=(iterations, count))
+        selected_weights = module_weights[indices]
+        numerator += (module_values[indices] * selected_weights).sum(axis=1)
+        denominator += selected_weights.sum(axis=1)
+    samples = numerator / denominator
+    estimate = np.average(values, weights=weights)
+    return interval(
+        samples,
+        estimate,
+        module_strata=int(unique_modules.size),
+        tensor_clusters=int(values.size),
+    )
 
 
 def main() -> None:
@@ -119,7 +110,9 @@ def main() -> None:
                 frame, metric, args.iterations, args.seed + 1000 + offset
             ),
         }
-    Path(args.output).write_text(json.dumps(result, indent=2, allow_nan=True), encoding="utf-8")
+    Path(args.output).write_text(
+        json.dumps(result, indent=2, allow_nan=True), encoding="utf-8"
+    )
     print(json.dumps(result, indent=2, allow_nan=True))
 
 
