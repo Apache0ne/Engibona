@@ -9,6 +9,8 @@ from engibona.fisher_refinement import (
     apply_binary_flips,
     binary_flip_predicted_delta,
     rank_binary_flips,
+    selected_hessian_diagonal,
+    validated_prefix_search,
 )
 from engibona.modules import GroupQuantizedEmbedding, GroupQuantizedLinear
 
@@ -80,3 +82,30 @@ def test_fisher_flip_formula_and_application() -> None:
     assert int(ranked.flat_indices[0]) == 7
     changed = apply_binary_flips(codes, ranked.flat_indices)
     assert int(changed[0, 7]) == -1
+
+
+def test_validated_prefix_search_rejects_bad_prefixes() -> None:
+    codes = torch.ones(8, dtype=torch.int8)
+    ranked = torch.tensor([0, 1, 2, 3])
+    target = codes.clone()
+    target[:2] = -1
+    result = validated_prefix_search(
+        codes,
+        ranked,
+        lambda value: float(
+            (value.float() - target.float()).square().sum()
+        ),
+        prefix_sizes=(1, 2, 4),
+    )
+    assert result.accepted_count == 2
+    assert result.final_loss == 0.0
+
+
+def test_selected_hessian_diagonal_matches_quadratic() -> None:
+    value = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)
+    curvature = torch.tensor([2.0, 4.0, 6.0])
+    loss = 0.5 * (curvature * value.square()).sum()
+    diagonal = selected_hessian_diagonal(
+        loss, value, torch.tensor([0, 2])
+    )
+    assert torch.allclose(diagonal, torch.tensor([2.0, 6.0]))
