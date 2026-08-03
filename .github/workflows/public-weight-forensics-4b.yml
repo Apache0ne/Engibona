@@ -2,10 +2,6 @@ name: public-weight-forensics-4b
 
 on:
   workflow_dispatch:
-  pull_request:
-  push:
-    branches:
-      - ci-public-weight-forensics-v6
 
 jobs:
   analyze:
