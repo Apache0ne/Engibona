@@ -8,6 +8,7 @@ import torch
 
 from .config import EngibonaConfig, QuantMode
 from .modules import GroupQuantizedEmbedding, GroupQuantizedLinear
+from .modules_tied import TiedGroupQuantizedLMHead
 from .packing import pack_binary, pack_ternary_2bit
 from .projection import metric_project
 
@@ -20,18 +21,22 @@ def export_packed(
 ) -> dict[str, Any]:
     """Export exact packed codes and FP16 scales.
 
-    The default `trained` strategy preserves the globally recovered exact hard
-    codes and learned scales. `metric_reproject` remains available as a PTQ or
-    diagnostic path; it is no longer the default because CPU ablations found
-    that local covariance re-projection can worsen end-to-end teacher behavior.
+    The default `trained` strategy preserves globally recovered exact hard
+    codes and learned scales. Tied embedding/head modules export identical
+    codebooks, preserving the source architecture's parameter equality.
     """
     tensors: dict[str, Any] = {}
+    supported = (
+        GroupQuantizedLinear,
+        GroupQuantizedEmbedding,
+        TiedGroupQuantizedLMHead,
+    )
     for name, module in model.named_modules():
-        if not isinstance(
-            module, (GroupQuantizedLinear, GroupQuantizedEmbedding)
-        ):
+        if not isinstance(module, supported):
             continue
-        if config.export_strategy == "trained":
+        if config.export_strategy == "trained" or isinstance(
+            module, TiedGroupQuantizedLMHead
+        ):
             codes, scales, _ = module.hard_codes_and_scales()
         else:
             result = metric_project(
