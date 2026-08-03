@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "engibona"
+version = "0.1.0"
+description = "Evidence-driven grouped binary and ternary model transformation research toolkit"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+authors = [{name = "Apache0ne"}]
+dependencies = [
+  "torch>=2.2",
+]
+
+[project.optional-dependencies]
+hf = ["transformers>=4.51", "accelerate>=1.0", "safetensors>=0.5"]
+test = ["pytest>=8.0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
