@@ -1,10 +1,10 @@
-name: evidence-max
+name: loss-objective-evidence
 
 on:
   pull_request:
   push:
     branches:
-      - ci-evidence-max-v4
+      - ci-loss-objective-v5
   workflow_dispatch:
 
 jobs:
@@ -21,40 +21,18 @@ jobs:
       - run: python -m pip install -e ".[hf,test]"
       - name: Unit tests
         run: pytest -q
-      - name: Official Qwen3-VL text architecture smoke
+      - name: Official Qwen3-VL recovery-loss matrix
         run: |
-          python experiments/official_qwen3vl_text/run_official_cpu_smoke.py \
-            --layers 2 \
-            --teacher-steps 20 \
-            --recovery-steps 20 \
-            --batch 6 \
-            --threads 4 \
-            --output official_qwen3vl_smoke.json
-      - name: Official Qwen3-VL binary and ternary method matrix
-        run: |
-          python experiments/official_qwen3vl_text/run_official_method_matrix.py \
+          python experiments/official_qwen3vl_text/run_official_loss_matrix.py \
             --seeds 3 \
             --layers 2 4 \
             --teacher-steps 80 \
-            --recovery-steps 80 \
+            --recovery-steps 100 \
             --batch 12 \
             --threads 4 \
-            --output official_qwen3vl_method_matrix.json
-      - name: Official Qwen3-VL ternary hardening schedule matrix
-        run: |
-          python experiments/official_qwen3vl_text/run_official_ternary_schedule_matrix.py \
-            --seeds 3 \
-            --layers 2 4 \
-            --teacher-steps 80 \
-            --recovery-steps 120 \
-            --batch 12 \
-            --threads 4 \
-            --output official_qwen3vl_ternary_schedule_matrix.json
+            --output official_qwen3vl_loss_matrix.json
       - uses: actions/upload-artifact@v4
         with:
-          name: evidence-max-results
-          path: |
-            official_qwen3vl_smoke.json
-            official_qwen3vl_method_matrix.json
-            official_qwen3vl_ternary_schedule_matrix.json
+          name: loss-objective-results
+          path: official_qwen3vl_loss_matrix.json
           if-no-files-found: error
