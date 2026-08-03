@@ -21,9 +21,13 @@ from .packing import (
     unpack_ternary_2bit,
 )
 from .fisher_refinement import (
+    FisherFlipCandidates,
+    ValidatedFlipResult,
     binary_flip_predicted_delta,
     rank_binary_flips,
     apply_binary_flips,
+    validated_prefix_search,
+    selected_hessian_diagonal,
 )
 
 __all__ = [
@@ -43,7 +47,11 @@ __all__ = [
     "unpack_binary",
     "pack_ternary_2bit",
     "unpack_ternary_2bit",
+    "FisherFlipCandidates",
+    "ValidatedFlipResult",
     "binary_flip_predicted_delta",
     "rank_binary_flips",
     "apply_binary_flips",
+    "validated_prefix_search",
+    "selected_hessian_diagonal",
 ]
