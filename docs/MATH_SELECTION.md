@@ -1,265 +1,245 @@
-# Mathematical method selection
+# Mathematical method selection — evidence revision V2
 
-This document records the pre-implementation review requested for Engibona: take each proposed mathematical component, compare it against stronger published alternatives, and select the mechanism that best fits both the public Bonsai representation and the available evidence.
+This document records the current selection after comparing published low-bit methods **and** testing competing paths on a tiny Qwen3-VL-text-topology decoder. It does not claim PrismML used the selected implementation.
 
-## 1. Final representation constraint
+## 1. Final representation
 
-### Required form
-
-For every contiguous group of 128 language weights:
+For every contiguous group of 128 weights:
 
 ```text
-binary:  w_hat = s c,  c_i in {-1,+1}
-ternary: w_hat = s c,  c_i in {-1,0,+1}
+binary:  q = s c,  c_i in {-1,+1}
+ternary: q = s c,  c_i in {-1,0,+1}
 ```
 
-with one FP16 scale `s` per group.
+with one positive FP16 scale `s` per group.
 
-### Rejected alternatives
+Rejected deployed representations include low-rank binary factors, mixed-precision salient channels, additive codebooks, and inference-time FP16 residuals because they do not match the disclosed direct code-plus-scale form.
 
-- NanoQuant low-rank binary factorization: strong compression method, but its deployed `U V^T` factors and channel scales do not match the disclosed single-code-plus-g128-scale representation.
-- PB-LLM/BiLLM/SAGE-style mixed salient channels: incompatible with end-to-end binary language weights.
-- Additive vector quantization: representation mismatch.
+## 2. Binary initialization
 
-### Pick
-
-Direct exact g128 code and scale tensors.
-
-## 2. Scale estimation
-
-For fixed code `c`, solve
-
-```text
-min_s (w - s c)^T M (w - s c).
-```
-
-Differentiation gives
-
-```text
-s* = (c^T M w) / (c^T M c).
-```
-
-### Compared methods
-
-- absmean scale: exact only for binary sign codes under the identity metric;
-- learned unconstrained scale: flexible, but can create positive feedback and zero-ratio collapse in ternary QAT;
-- direct gradient learning of scale and threshold: CAT-Q reports only modest gains without modulation and softened ternarization;
-- metric-optimal analytic scale: exact for fixed codes, stable, and supports identity, diagonal, or full covariance metrics.
-
-### Pick
-
-Analytic metric-optimal positive scale. It is recomputed after every code change. Training-time soft modules use detached absmean for stability; exact export uses the metric-optimal formula.
-
-## 3. Initial codes
-
-### Binary
+The Euclidean fixed-scale optimum is:
 
 ```text
 c_i = sign(w_i)
+s = mean_i |w_i|
 ```
 
-is the Euclidean optimum for fixed positive scale and is the strongest format-compatible initialization.
+This remains the default initializer, not the full recovery method.
 
-### Ternary
+## 3. Binary recovery selected by experiment
 
-Initialize by alternating nearest-level assignment and scale fitting:
+The current binary default is an exact hard forward with a trainable positive group scale:
 
 ```text
-c_i = sign(w_i) if |w_i| > s/2 else 0
-s = sum_{c_i != 0} |w_i| / count(c_i != 0)
+c = sign(u)
+q = s c
+s = exp(log_s)
 ```
 
-### Pick
-
-Use these only as initial states, followed by metric-aware code reassignment.
-
-## 4. Code optimization
-
-After substituting the optimal scale, the minimized group objective is
+The training expression is:
 
 ```text
-w^T M w - (c^T M w)^2 / (c^T M c).
+q_train = q + u - stop_gradient(u)
 ```
 
-The constant first term means code optimization maximizes
+Forward value:
 
 ```text
-score(c) = (c^T M w)^2 / (c^T M c).
+q_train == q
 ```
 
-For a one-coordinate transition `c' = c + delta e_j`:
+Gradients:
 
 ```text
-numerator'    = numerator + delta (M w)_j
-denominator'  = denominator + 2 delta (M c)_j + delta^2 M_jj
+d q_train / d u = 1
+d q_train / d log_s = d q / d log_s
 ```
 
-This scores every binary sign flip or ternary state transition exactly while re-optimizing the group scale in closed form.
-
-### Compared methods
-
-- scale-only fitting: cannot move wrong signs or zero masks;
-- STE: indirect and gradient-mismatched;
-- full combinatorial search: exact but infeasible;
-- ADMM-Q: strong general solver, but a full dense ADMM state is expensive for every g128 group;
-- local coordinate search after a smooth/proximal initialization: exact per move, simple, format-matched.
-
-### Pick
-
-Exact metric-aware coordinate refinement. ADMM/operator splitting remains a valid future initializer, not the mandatory deployed representation.
-
-## 5. Reconstruction metric
-
-For a linear layer and calibration matrix `X`:
+This preserves an identity surrogate gradient for code movement while keeping real scale gradients. A bounded log-scale trust region is used:
 
 ```text
-||XW - XW_hat||_F^2
-= Tr((W-W_hat)^T X^T X (W-W_hat)).
+log_s in [log_s0 - r, log_s0 + r]
 ```
 
-Therefore:
+### Why this replaced smooth binary continuation
+
+On three independent tiny Qwen3-VL-topology teachers, exact-hard STE + teacher KD beat smooth and staged recovery for every seed on cross-entropy, teacher KL, and accuracy. Therefore smooth relaxation is no longer treated as the highest-confidence binary default.
+
+This result supports the Engibona implementation choice. It does not prove PrismML used an STE.
+
+## 4. Ternary recovery
+
+Ternary remains less resolved. The current path uses:
+
+- learned positive group scale;
+- learned assignment shift;
+- learned bounded threshold;
+- CAT-Q-style softened assignment early;
+- sustained exact-hard recovery later;
+- optional zero-ratio regularization;
+- trained-state export.
+
+The hard ternary code is:
 
 ```text
-M = X^T X + lambda I.
+c_i = -1  if (u_i - shift)/s < -threshold
+c_i =  0  if |(u_i - shift)/s| <= threshold
+c_i = +1  if (u_i - shift)/s > +threshold
 ```
 
-### Compared methods
+A deep ternary version of the CPU ablation is required before this path receives the same confidence as the binary default.
 
-- raw weight MSE (`M=I`): ignores actual activations;
-- activation diagonal: inexpensive and better than identity;
-- full within-group activation covariance: preserves correlations inside each g128 block;
-- Kronecker activation/gradient Hessian: theoretically richer, but requires output-gradient covariance and substantially more calibration machinery;
-- exact Hessian: infeasible at model scale.
+## 5. Teacher-behavior objective
 
-### Pick
-
-Full within-group activation covariance by default, with diagonal and identity fallbacks. Gradient/K-FAC weighting is documented as a high-value extension but is not falsely treated as confirmed.
-
-## 6. Smooth-to-hard transition
-
-### Compared methods
-
-- hard STE from step zero: creates dead zones and gradient mismatch;
-- CAT-Q softened ternarization:
+Local weight error is insufficient. The primary global recovery objective is conceptually:
 
 ```text
-f(w;s,d) = [tanh(s(w-d)) + tanh(s(w+d))] / [2 tanh(s)]
+L = lambda_CE * CE(labels, student)
+  + lambda_KD * T^2 * KL(teacher || student)
+  + lambda_window * ||Y_teacher - Y_student||^2
+  + lambda_hidden * L_hidden
+  + regularization
 ```
 
-- Hestia categorical relaxation:
+The tiny benchmark directly supports teacher KL plus task loss. Window, hidden, CKA, and recurrent-state losses remain components to isolate under equal compute.
+
+## 6. Trained-state export
+
+The default export preserves:
 
 ```text
-pi_tau(q|w) = exp(-(w/s-q)^2/tau) / sum_k exp(-(w/s-k)^2/tau)
-H(w;tau) = s sum_q q pi_tau(q|w)
+codes = hard_codes(recovered_state)
+scales = learned_positive_scales(recovered_state)
 ```
 
-- Hestia dense-to-quantized pressure:
+It does not re-project the latent carrier by default.
+
+### Finalization evidence
+
+After global recovery on one seed:
 
 ```text
-W_eff(t) = (1-p_t)W + p_t H(W;tau).
+preserve trained codes/scales:       CE 3.2743, KL 1.8904
+covariance-optimal scale replacement: CE 3.8967, KL 2.4271
+covariance scale + coordinate search: CE 4.9813, KL 3.4895
 ```
 
-### Pick
+The local covariance objective destroyed cross-layer compensation learned by the global teacher objective. `metric_reproject` therefore remains explicit opt-in behavior.
 
-- ternary default: CAT-Q transition because it is specifically validated for PTQ ternarization at large scale;
-- binary default: categorical relaxation over `{-1,+1}`;
-- shared compression-pressure path for both;
-- exact hard projection at the end.
+## 7. Local metric projection
 
-## 7. Sensitivity-aware hardening
-
-A uniform hardening rate ignores tensor heterogeneity. Hestia estimates tensor curvature and uses it as a temporal scheduler:
+Metric projection is still useful for PTQ initialization, diagnostics, and controlled ablations:
 
 ```text
-s_i = sigmoid(kappa (log h_i - mean(log h)) / std(log h))
-tau_i(t) = tau_bar(t) exp(alpha s_i).
+E(c,s) = (w - s c)^T M (w - s c)
 ```
 
-Sensitive tensors stay soft longer.
-
-### Pick
-
-Hessian-trace-compatible tensor sensitivity scheduling. The reference includes a simple Hutchinson estimator and a normalization function; a distributed Hutch++ implementation is required for 27B-scale production.
-
-## 8. Reconstruction scope
-
-### Compared methods
-
-- independent weight reconstruction;
-- independent layer-output reconstruction;
-- sequential block reconstruction with student inputs;
-- sliding multi-layer output reconstruction;
-- final full-model alignment.
-
-CAT-Q reports a sliding-layer objective:
+For fixed code:
 
 ```text
-min ||F(W_window, X) - F(S_window C_window, X)||_2^2.
+s* = (c^T M w) / (c^T M c)
 ```
 
-NanoQuant ablations show material gains from error mitigation, block reconstruction, and model reconstruction.
-
-### Pick
-
-Sliding-window or block-output reconstruction followed by global teacher-guided recovery. The package supplies the mathematical pieces and losses; the 27B distributed orchestration is intentionally not fabricated.
-
-## 9. Teacher and representation losses
-
-### Highest-confidence objective components
+After substituting `s*`, code refinement maximizes:
 
 ```text
-L = lambda_CE L_CE
-  + lambda_KD T^2 KL(p_teacher || p_student)
-  + lambda_window ||Y_teacher - Y_student||_2^2
-  + lambda_hidden L_hidden.
+score(c) = (c^T M w)^2 / (c^T M c)
 ```
 
-Relational CKA is available:
+For one transition `c' = c + delta e_j`:
 
 ```text
-L_CKA = 1 - CKA(H_teacher, H_student),
+numerator'   = numerator + delta (M w)_j
+denominator' = denominator + 2 delta (M c)_j + delta^2 M_jj
 ```
 
-but remains opt-in because direct evidence for its use in Bonsai is weaker.
+Metrics include:
 
-### Pick
+- identity;
+- activation diagonal;
+- full within-group activation covariance.
 
-Teacher KL, normal token loss, and block/window output reconstruction enabled conceptually. CKA and recurrent-state losses are optional.
+The important boundary is that an exact local improvement is not necessarily a global sequence-model improvement.
 
-## 10. Recovery-data selection
+## 8. Empirical-Fisher exact sign refinement
 
-GRACE and PADP support adaptive, model-state-aware sample selection. A Bonsai-compatible score is:
+After exact-hard binary recovery, Engibona can estimate the local effect of a sign flip.
+
+For:
 
 ```text
-damage_t(x) = KL(p_teacher(x) || p_student_t(x))
-variation_t(x) = mean_j |damage_j(x) - damage_{j-1}(x)|
+w = s c
+c' = -c
+delta_w = -2 s c
 ```
 
-combined with representation coverage.
+and empirical-Fisher diagonal `F`, the predicted loss change is:
 
-### Pick
+```text
+delta_L ~= g * delta_w + 0.5 * F * delta_w^2
+```
 
-Implemented as an optional utility, disabled by default. The evidence supports usefulness, not that PrismML specifically used it.
+Candidate negative deltas are ranked. Prefixes of candidate flips must be evaluated against the actual teacher/task calibration loss; only a real-loss improvement is accepted.
 
-## 11. Packing
+This refinement improved CE and teacher KL on all three tested seeds.
 
-- binary: eight signs per byte, `-1 -> 0`, `+1 -> 1`;
-- ternary: four two-bit symbols per byte, `-1 -> 0`, `0 -> 1`, `+1 -> 2`;
-- FP16 group scales stored separately.
+## 9. Scale stability
 
-The ternary two-bit format is hardware-friendly but not entropy-optimal. A kernel-specific encoder can replace it after runtime requirements are fixed.
+Unconstrained learned scales can couple pathologically with code thresholds. Engibona therefore uses:
 
-## Final selected sequence
+- positive log-parameterized scales;
+- finite lower and upper bounds;
+- a log-scale trust region around initialization;
+- optional scale tethering;
+- optional ternary zero-ratio target.
+
+Scale-only polishing with frozen hard codes remains a valid final recovery stage. It matched the original hard state on behavior and slightly improved accuracy in the finalization ablation.
+
+## 10. Coverage
+
+The low-bit wrapper includes by default:
+
+- token embeddings;
+- q/k/v/o projections;
+- MLP gate/up/down projections;
+- LM head.
+
+Normalization parameters and sensitive non-matrix operations remain high precision.
+
+## 11. Optional mechanisms not promoted to defaults
+
+The following remain research options rather than claimed parts of the private Bonsai algorithm:
+
+- ADMM or augmented Lagrangian optimization;
+- K-FAC or full gradient covariance;
+- learned orthogonal rotations;
+- CKA relational geometry;
+- dynamic GRACE/PADP-style curriculum;
+- recurrent/linear-attention state matching;
+- exact Hessian methods.
+
+## 12. Current selected sequence
 
 ```text
 pretrained model
--> activation calibration and tensor sensitivity
--> sign/threshold PTQ initialization
--> smooth dense-to-discrete continuation
--> sliding-window output reconstruction
--> metric-aware exact code/scale refinement
--> global CE + teacher recovery
--> exact code freezing
--> scale/norm polish
--> packed g128 export
+-> sign/threshold g128 initialization
+-> exact-hard binary recovery or soft-then-hard ternary recovery
+-> learned positive scale under trust region
+-> teacher/task/block behavior optimization
+-> preserve trained exact codes and scales
+-> optional empirical-Fisher discrete refinement with line search
+-> optional frozen-code scale polish
+-> exact packing
 ```
+
+## 13. Next maximum-confidence experiments
+
+1. Repeat all binary methods at four layers.
+2. Run a full ternary matrix including threshold, shift, zero-ratio, and scale controls.
+3. Compare equal-budget CE, KL, hidden MSE, CKA, block-output, and recurrent-state losses.
+4. Compare hard STE, projected gradient, proximal code updates, ADMM, and alternating exact code/scale updates.
+5. Compute exact Hessian blocks on the tiny network and compare them with empirical Fisher, activation covariance, diagonal Fisher, and Kronecker approximations.
+6. Perform module-by-module ablations for embedding, LM head, attention projections, and MLP projections.
+7. Run public Bonsai weight forensics to compare released codes/scales against each candidate algorithm.
+
+Measured results and architecture details are in [`TINY_QWEN3VL_CPU_ABLATION.md`](TINY_QWEN3VL_CPU_ABLATION.md).
