@@ -31,6 +31,12 @@ jobs:
             --groups-per-tensor 512 \
             --seed 1337 \
             --output-dir public_bonsai_forensics
+      - name: Tensor-cluster confidence intervals
+        run: |
+          python experiments/public_bonsai_forensics/summarize_confidence.py \
+            --input public_bonsai_forensics/tensor_metrics.csv \
+            --output public_bonsai_forensics/confidence_intervals.json \
+            --iterations 4000
       - name: Show final storage
         if: always()
         run: df -h
