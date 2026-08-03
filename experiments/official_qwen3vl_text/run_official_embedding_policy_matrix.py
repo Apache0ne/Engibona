@@ -33,22 +33,26 @@ def unique_states(replaced):
 
 def snapshot(state):
     codes, scales, _ = state.hard_codes_and_scales()
-    return codes.detach().cpu().clone(), scales.detach().float().cpu().clone()
+    source_sign = state.initial_sign_groups.reshape_as(codes).detach().cpu().to(torch.int8)
+    return (
+        codes.detach().cpu().clone(),
+        scales.detach().float().cpu().clone(),
+        source_sign.clone(),
+    )
 
 
 def state_delta(initial, state):
-    initial_codes, initial_scales = initial
+    initial_codes, initial_scales, source_sign = initial
     codes, scales, _ = state.hard_codes_and_scales()
     codes = codes.detach().cpu()
     scales = scales.detach().float().cpu()
     nonzero = codes != 0
-    initial_sign = initial_codes.sign()
-    sign_flip = (
-        (codes.sign() != initial_sign) & nonzero
-    ).float().mean()
+    true_source_sign_flip = (
+        (codes.sign() != source_sign) & nonzero
+    ).float().sum() / nonzero.float().sum().clamp_min(1.0)
     return {
         "code_change_rate": float((codes != initial_codes).float().mean()),
-        "nonzero_sign_flip_rate": float(sign_flip),
+        "nonzero_sign_flip_rate_vs_source": float(true_source_sign_flip),
         "zero_ratio": float((codes == 0).float().mean()),
         "mean_abs_log_scale_change": float(
             (
@@ -84,8 +88,9 @@ def recover(model, teacher, data, mode, embedding_strategy, steps, batch):
     )
     states, embedding = unique_states(replaced)
     initial_embedding = snapshot(embedding)
+    trainable = [parameter for parameter in student.parameters() if parameter.requires_grad]
     optimizer = torch.optim.AdamW(
-        [parameter for parameter in student.parameters() if parameter.requires_grad],
+        trainable,
         lr=7e-4,
         betas=(0.9, 0.95),
         weight_decay=0.001,
@@ -100,19 +105,16 @@ def recover(model, teacher, data, mode, embedding_strategy, steps, batch):
             teacher_logits = teacher(input_ids[indices])
         logits = student(input_ids[indices])
         loss = kd_loss(teacher_logits, logits)
-        regularizers = [
-            state.regularization_loss()
-            for state in states
-            if state.regularization_loss().requires_grad
-        ]
+        regularizers = []
+        for state in states:
+            value = state.regularization_loss()
+            if value.requires_grad:
+                regularizers.append(value)
         if regularizers:
             loss = loss + torch.stack(regularizers).sum()
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
-        torch.nn.utils.clip_grad_norm_(
-            [parameter for parameter in student.parameters() if parameter.requires_grad],
-            1.0,
-        )
+        torch.nn.utils.clip_grad_norm_(trainable, 1.0)
         optimizer.step()
     for state in states:
         state.set_schedule(steps, steps)
@@ -161,7 +163,7 @@ def aggregate(runs):
         if method != "teacher":
             for metric in (
                 "code_change_rate",
-                "nonzero_sign_flip_rate",
+                "nonzero_sign_flip_rate_vs_source",
                 "zero_ratio",
                 "mean_abs_log_scale_change",
             ):
@@ -198,6 +200,10 @@ def main():
     payload = {
         "implementation": "transformers.Qwen3VLTextModel",
         "arguments": vars(args),
+        "metric_correction": (
+            "nonzero_sign_flip_rate_vs_source compares final nonzero signs "
+            "against original FP embedding signs, including positions that were initially zero"
+        ),
         "by_depth": by_depth,
         "seconds": time.time() - started,
     }
