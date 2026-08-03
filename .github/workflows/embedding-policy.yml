@@ -1,0 +1,38 @@
+name: embedding-policy-evidence
+
+on:
+  pull_request:
+  push:
+    branches:
+      - ci-public-weight-forensics-v6
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e ".[hf,test]"
+      - name: Unit tests
+        run: pytest -q
+      - name: Official Qwen3-VL embedding policy matrix
+        run: |
+          python experiments/official_qwen3vl_text/run_official_embedding_policy_matrix.py \
+            --seeds 3 \
+            --layers 2 4 \
+            --teacher-steps 80 \
+            --recovery-steps 100 \
+            --batch 12 \
+            --threads 4 \
+            --output official_qwen3vl_embedding_policy_matrix.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: embedding-policy-results
+          path: official_qwen3vl_embedding_policy_matrix.json
+          if-no-files-found: error
