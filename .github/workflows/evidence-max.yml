@@ -30,8 +30,20 @@ jobs:
             --batch 6 \
             --threads 4 \
             --output official_qwen3vl_smoke.json
+      - name: Official Qwen3-VL binary and ternary method matrix
+        run: |
+          python experiments/official_qwen3vl_text/run_official_method_matrix.py \
+            --seeds 3 \
+            --layers 2 4 \
+            --teacher-steps 80 \
+            --recovery-steps 80 \
+            --batch 12 \
+            --threads 4 \
+            --output official_qwen3vl_method_matrix.json
       - uses: actions/upload-artifact@v4
         with:
           name: evidence-max-results
-          path: official_qwen3vl_smoke.json
+          path: |
+            official_qwen3vl_smoke.json
+            official_qwen3vl_method_matrix.json
           if-no-files-found: error
