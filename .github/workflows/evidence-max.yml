@@ -1,10 +1,6 @@
 name: loss-objective-evidence
 
 on:
-  pull_request:
-  push:
-    branches:
-      - ci-loss-objective-v5
   workflow_dispatch:
 
 jobs:
