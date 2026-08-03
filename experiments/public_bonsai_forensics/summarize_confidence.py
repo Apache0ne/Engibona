@@ -21,6 +21,15 @@ DEFAULT_METRICS = [
     "ternary_actual_over_naive_nmse",
     "binary_ternary_sign_agreement_nonzero",
     "binary_ternary_scale_corr",
+    "binary_flip_given_ternary_zero",
+    "binary_flip_given_ternary_nonzero",
+    "ternary_zero_given_binary_flip",
+    "binary_base_agreement_on_ternary_zero",
+    "binary_base_agreement_on_ternary_nonzero",
+    "binary_flip_ternary_zero_jaccard",
+    "ternary_nonzero_sign_disagreement_binary",
+    "ternary_sign_flip_given_nonzero",
+    "joint_flip_zero_base_magnitude_percentile",
 ]
 
 
