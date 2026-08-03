@@ -26,7 +26,7 @@ jobs:
         run: df -h
       - name: Stream Qwen and public Bonsai weights
         run: |
-          python experiments/public_bonsai_forensics/run_streaming_weight_forensics.py \
+          python experiments/public_bonsai_forensics/run_streaming_weight_forensics_tied.py \
             --group-size 128 \
             --groups-per-tensor 512 \
             --seed 1337 \
