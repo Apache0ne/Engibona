@@ -13,6 +13,7 @@ from engibona.fisher_refinement import (
     validated_prefix_search,
 )
 from engibona.modules import GroupQuantizedEmbedding, GroupQuantizedLinear
+from engibona.packing import unpack_binary
 
 
 def test_binary_forward_is_exact_hard_and_scales_train() -> None:
@@ -109,3 +110,28 @@ def test_selected_hessian_diagonal_matches_quadratic() -> None:
         loss, value, torch.tensor([0, 2])
     )
     assert torch.allclose(diagonal, torch.tensor([2.0, 6.0]))
+
+
+def test_export_roundtrip_reconstructs_exact_hard_weight() -> None:
+    config = EngibonaConfig(
+        mode=QuantMode.BINARY,
+        export_strategy="trained",
+    )
+    model = nn.Sequential(
+        GroupQuantizedLinear(nn.Linear(128, 3, bias=False), config)
+    )
+    codes, scales, expected = model[0].hard_codes_and_scales()
+    with tempfile.NamedTemporaryFile(suffix=".pt") as handle:
+        item = export_packed(model, handle.name, config)["tensors"]["0"]
+
+    decoded = unpack_binary(
+        item["packed_codes"], codes.numel()
+    ).reshape(codes.shape)
+    reconstructed = (
+        decoded.float().reshape(3, 1, 128)
+        * item["scales_fp16"].float()[..., None]
+    ).reshape_as(expected)
+
+    assert torch.equal(decoded, codes.cpu())
+    assert torch.allclose(reconstructed, expected.cpu(), atol=2.0e-3)
+    assert "latent_weight" not in item
