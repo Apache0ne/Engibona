@@ -11,15 +11,7 @@ class QuantMode(str, Enum):
 
 @dataclass(slots=True)
 class EngibonaConfig:
-    """Evidence-driven grouped binary/ternary recovery settings.
-
-    Defaults follow the strongest result from the architecture-faithful CPU
-    ablation: exact hard binary forwards with trainable positive group scales,
-    teacher-behavior recovery, and trained-state export. Local metric projection
-    remains available for initialization and diagnostics, but is not the default
-    finalizer because it can improve its local quadratic objective while harming
-    end-to-end sequence behavior.
-    """
+    """Evidence-selected grouped binary/ternary recovery settings."""
 
     mode: QuantMode = QuantMode.TERNARY
     group_size: int = 128
@@ -29,16 +21,14 @@ class EngibonaConfig:
     code_refine_steps: int = 8
     code_refine_tolerance: float = 1.0e-10
 
-    # auto => hard_ste for binary; catq for ternary.
+    # auto => exact-hard binary; CAT-Q then exact-hard ternary.
     relaxation: str = "auto"
     initial_temperature: float = 1.0
     final_temperature: float = 0.08
     sensitivity_alpha: float = 1.5
     compression_fraction: float = 0.30
-    hard_recovery_start: float = 0.55
+    hard_recovery_start: float = 0.50
 
-    # Positive learned group scales. The trust region protects against the
-    # ternary zero-ratio/scale feedback failure observed in low-bit recovery.
     scale_min: float = 1.0e-6
     scale_max: float = 16.0
     scale_log_trust_radius: float = 2.0
@@ -46,15 +36,16 @@ class EngibonaConfig:
     ternary_zero_target: float = 0.35
     ternary_zero_weight: float = 0.0
 
-    ce_weight: float = 0.20
+    # Clean official-architecture loss ablations selected pure teacher KL for
+    # behavior-preserving conversion. CE and hidden losses remain opt-in for
+    # domain adaptation and state-fidelity tradeoffs.
+    ce_weight: float = 0.00
     kd_weight: float = 1.00
-    window_reconstruction_weight: float = 1.00
-    hidden_mse_weight: float = 0.10
+    window_reconstruction_weight: float = 0.00
+    hidden_mse_weight: float = 0.00
     cka_weight: float = 0.00
     kd_temperature: float = 1.0
 
-    # trained: preserve globally recovered exact codes/scales.
-    # metric_reproject: diagnostic/PTQ path only.
     export_strategy: str = "trained"
 
     enable_dynamic_curriculum: bool = False
@@ -81,3 +72,12 @@ class EngibonaConfig:
             raise ValueError("scale_log_trust_radius must be positive")
         if not 0.0 <= self.ternary_zero_target <= 1.0:
             raise ValueError("ternary_zero_target must be in [0, 1]")
+        for name, value in (
+            ("ce_weight", self.ce_weight),
+            ("kd_weight", self.kd_weight),
+            ("window_reconstruction_weight", self.window_reconstruction_weight),
+            ("hidden_mse_weight", self.hidden_mse_weight),
+            ("cka_weight", self.cka_weight),
+        ):
+            if value < 0:
+                raise ValueError(f"{name} must be nonnegative")
