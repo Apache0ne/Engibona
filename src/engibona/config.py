@@ -11,15 +11,7 @@ class QuantMode(str, Enum):
 
 @dataclass(slots=True)
 class EngibonaConfig:
-    """Evidence-driven grouped binary/ternary recovery settings.
-
-    Defaults follow the strongest result from the architecture-faithful CPU
-    ablation: exact hard binary forwards with trainable positive group scales,
-    teacher-behavior recovery, and trained-state export. Local metric projection
-    remains available for initialization and diagnostics, but is not the default
-    finalizer because it can improve its local quadratic objective while harming
-    end-to-end sequence behavior.
-    """
+    """Evidence-driven grouped binary/ternary recovery settings."""
 
     mode: QuantMode = QuantMode.TERNARY
     group_size: int = 128
@@ -29,16 +21,16 @@ class EngibonaConfig:
     code_refine_steps: int = 8
     code_refine_tolerance: float = 1.0e-10
 
-    # auto => hard_ste for binary; catq for ternary.
+    # auto => hard_ste for binary; CAT-Q then exact-hard for ternary.
     relaxation: str = "auto"
     initial_temperature: float = 1.0
     final_temperature: float = 0.08
     sensitivity_alpha: float = 1.5
     compression_fraction: float = 0.30
-    hard_recovery_start: float = 0.55
+    # A clean official Qwen3-VL 2/4-layer matrix selected a midpoint
+    # soft-to-hard transition as the strongest teacher-behavior compromise.
+    hard_recovery_start: float = 0.50
 
-    # Positive learned group scales. The trust region protects against the
-    # ternary zero-ratio/scale feedback failure observed in low-bit recovery.
     scale_min: float = 1.0e-6
     scale_max: float = 16.0
     scale_log_trust_radius: float = 2.0
@@ -53,8 +45,6 @@ class EngibonaConfig:
     cka_weight: float = 0.00
     kd_temperature: float = 1.0
 
-    # trained: preserve globally recovered exact codes/scales.
-    # metric_reproject: diagnostic/PTQ path only.
     export_strategy: str = "trained"
 
     enable_dynamic_curriculum: bool = False
