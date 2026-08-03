@@ -28,7 +28,7 @@ jobs:
         run: |
           python experiments/public_bonsai_forensics/run_streaming_weight_forensics_tied.py \
             --group-size 128 \
-            --groups-per-tensor 512 \
+            --groups-per-tensor 2048 \
             --seed 1337 \
             --output-dir public_bonsai_forensics
       - name: Tensor-cluster confidence intervals
