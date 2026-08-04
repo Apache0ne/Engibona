@@ -2,6 +2,7 @@ name: gauge-forensics
 
 on:
   workflow_dispatch:
+  pull_request:
   push:
     branches:
       - ci-gauge-forensics-v9
