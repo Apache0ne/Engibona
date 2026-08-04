@@ -1,0 +1,95 @@
+{
+  "repositories": {
+    "base": "Qwen/Qwen3-1.7B",
+    "binary": "prism-ml/Bonsai-1.7B-unpacked",
+    "ternary": "prism-ml/Ternary-Bonsai-1.7B-unpacked"
+  },
+  "tensor_count": 197,
+  "sampled_groups": 100862,
+  "sampled_weights": 12910336,
+  "metrics": {
+    "binary_direct_sign_agreement": 0.7223904165546325,
+    "binary_best_positive_threshold_agreement": 0.7514703722707942,
+    "binary_best_either_orientation_threshold_agreement": 0.7514758717403665,
+    "binary_sorted_transition_fraction": 0.3625114144578553,
+    "binary_code_entropy_bits": 0.9943318297685674,
+    "ternary_best_sign_locked_threshold_agreement": 0.657777148499012,
+    "ternary_best_zero_mask_threshold_agreement": 0.6891672687871284,
+    "ternary_sorted_transition_fraction": 0.47641922176292445,
+    "ternary_code_entropy_bits": 1.560251212827308
+  },
+  "module_metrics": {
+    "embed_tokens": {
+      "groups_sampled": 510,
+      "binary_direct_sign_agreement": 0.999096,
+      "binary_best_positive_threshold_agreement": 0.999939,
+      "binary_sorted_transition_fraction": 0.007998,
+      "ternary_best_sign_locked_threshold_agreement": 0.999755,
+      "ternary_best_zero_mask_threshold_agreement": 0.999755,
+      "ternary_sorted_transition_fraction": 0.016088
+    },
+    "q_proj": {
+      "groups_sampled": 14336,
+      "binary_direct_sign_agreement": 0.706462,
+      "binary_best_positive_threshold_agreement": 0.736570,
+      "ternary_best_sign_locked_threshold_agreement": 0.629454,
+      "ternary_best_zero_mask_threshold_agreement": 0.679224
+    },
+    "k_proj": {
+      "groups_sampled": 14336,
+      "binary_direct_sign_agreement": 0.700606,
+      "binary_best_positive_threshold_agreement": 0.730965,
+      "ternary_best_sign_locked_threshold_agreement": 0.629056,
+      "ternary_best_zero_mask_threshold_agreement": 0.672077
+    },
+    "v_proj": {
+      "groups_sampled": 14336,
+      "binary_direct_sign_agreement": 0.760880,
+      "binary_best_positive_threshold_agreement": 0.787462,
+      "ternary_best_sign_locked_threshold_agreement": 0.699766,
+      "ternary_best_zero_mask_threshold_agreement": 0.716890
+    },
+    "o_proj": {
+      "groups_sampled": 14336,
+      "binary_direct_sign_agreement": 0.740895,
+      "binary_best_positive_threshold_agreement": 0.768688,
+      "ternary_best_sign_locked_threshold_agreement": 0.670317,
+      "ternary_best_zero_mask_threshold_agreement": 0.699730
+    },
+    "gate_proj": {
+      "groups_sampled": 14336,
+      "binary_direct_sign_agreement": 0.703402,
+      "binary_best_positive_threshold_agreement": 0.733940,
+      "ternary_best_sign_locked_threshold_agreement": 0.643567,
+      "ternary_best_zero_mask_threshold_agreement": 0.672798
+    },
+    "up_proj": {
+      "groups_sampled": 14336,
+      "binary_direct_sign_agreement": 0.700529,
+      "binary_best_positive_threshold_agreement": 0.731193,
+      "ternary_best_sign_locked_threshold_agreement": 0.635836,
+      "ternary_best_zero_mask_threshold_agreement": 0.673483
+    },
+    "down_proj": {
+      "groups_sampled": 14336,
+      "binary_direct_sign_agreement": 0.734114,
+      "binary_best_positive_threshold_agreement": 0.762636,
+      "ternary_best_sign_locked_threshold_agreement": 0.684277,
+      "ternary_best_zero_mask_threshold_agreement": 0.698921
+    }
+  },
+  "interpretation": [
+    "The best independently fitted monotone binary threshold improves agreement by only 2.91 percentage points over sign(W), reaching 75.15% rather than approaching exact recovery.",
+    "Allowing reversed threshold orientation changes agreement by only 0.00055 percentage points, rejecting widespread per-group sign reversal as the explanation.",
+    "Released binary codes remain highly non-monotone after sorting base weights: adjacent code transitions occur across 36.25% of sorted positions.",
+    "The best sign-locked ternary threshold explains only 65.78% of full ternary codes; even the best zero-mask threshold explains only 68.92%.",
+    "Embedding is the direct-threshold exception; transformer matrices require broad learned reassignment beyond any single per-group threshold."
+  ],
+  "runtime_seconds": 220.1534776687622,
+  "workflow": {
+    "run_id": 30865369189,
+    "artifact_id": 8875959083,
+    "artifact_zip_sha256": "cd3a50041f04b6f18cf4f3bba0bdd1cc4f086147a4ec64cf6e7b55feaeee6be9",
+    "summary_json_sha256": "82348b264a073b4647de53f3adc8adf86ad9bc8f55111a710d26d3cf847956c5"
+  }
+}
