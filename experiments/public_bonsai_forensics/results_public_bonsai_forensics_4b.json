@@ -1,0 +1,101 @@
+{
+  "repositories": {
+    "base": "Qwen/Qwen3-4B",
+    "binary": "prism-ml/Bonsai-4B-unpacked",
+    "ternary": "prism-ml/Ternary-Bonsai-4B-unpacked"
+  },
+  "coverage": {
+    "tensor_count": 253,
+    "sampled_groups": 259071,
+    "sampled_weights": 33161088,
+    "group_size": 128,
+    "groups_per_tensor_limit": 1024
+  },
+  "global_metrics": {
+    "binary_sign_agreement_base": 0.7314647214296301,
+    "binary_sign_agreement_95ci": [0.7270783119050882, 0.735961504396415],
+    "binary_scale_corr_mean_abs_base": 0.665768560154622,
+    "binary_actual_over_naive_nmse": 5.819641381409218,
+    "binary_actual_over_naive_nmse_95ci": [5.518078700806822, 6.123411194658854],
+    "ternary_zero_rate": 0.3756960869758263,
+    "ternary_code_agreement_naive": 0.6202342033562924,
+    "ternary_code_agreement_naive_95ci": [0.6142452890138507, 0.6261532667937452],
+    "ternary_nonzero_sign_agreement_base": 0.8618486701090964,
+    "ternary_scale_corr_naive": 0.720483113649645,
+    "ternary_actual_over_naive_nmse": 4.302565435009627,
+    "ternary_actual_over_naive_nmse_95ci": [4.147700379507466, 4.455404591632725],
+    "binary_ternary_sign_agreement_nonzero": 0.8897503630139487,
+    "binary_ternary_scale_corr": 0.9442068724609237,
+    "binary_flip_given_ternary_zero": 0.41220388385232914,
+    "binary_flip_given_ternary_nonzero": 0.18130306665889848,
+    "ternary_zero_given_binary_flip": 0.585605005667563,
+    "binary_flip_ternary_zero_jaccard": 0.317098691104666
+  },
+  "embedding_metrics": {
+    "binary_sign_agreement_base": 0.936492,
+    "binary_scale_corr_mean_abs_base": 0.989324,
+    "binary_actual_over_naive_nmse": 1.073715,
+    "ternary_zero_rate": 0.308613,
+    "ternary_code_agreement_naive": 0.827652,
+    "ternary_nonzero_sign_agreement_base": 0.996167,
+    "ternary_scale_corr_naive": 0.926253,
+    "binary_ternary_sign_agreement_nonzero": 1.0,
+    "binary_ternary_scale_corr": 0.999997,
+    "binary_flip_given_ternary_zero": 0.197199,
+    "binary_flip_given_ternary_nonzero": 0.003833,
+    "ternary_zero_given_binary_flip": 0.958273
+  },
+  "module_binary_actual_over_naive_nmse": {
+    "q_proj": 4.477787,
+    "k_proj": 5.510243,
+    "v_proj": 8.193098,
+    "o_proj": 4.344304,
+    "gate_proj": 6.738506,
+    "up_proj": 8.376615,
+    "down_proj": 3.228639,
+    "embed_tokens": 1.073715
+  },
+  "depth_metrics": {
+    "binary_sign_agreement_layer_correlation": -0.6923677830763327,
+    "binary_actual_over_naive_nmse_layer_correlation": 0.9247849902283426,
+    "ternary_code_agreement_layer_correlation": -0.38011880128253295,
+    "ternary_zero_rate_layer_correlation": 0.6572769875546335,
+    "ternary_actual_over_naive_nmse_layer_correlation": 0.8825686811380855,
+    "first_last_binary_sign_agreement": [0.7417940412248883, 0.6956198556082589],
+    "first_last_binary_nmse_ratio": [4.14854935747351, 5.9957322073260615],
+    "first_last_ternary_code_agreement": [0.6254523141043526, 0.5821217128208706],
+    "first_last_ternary_nmse_ratio": [3.658475979298175, 4.719153585584594]
+  },
+  "cross_scale_comparison_to_1p7b": {
+    "global_binary_sign_agreement": [0.7225174492385786, 0.7314647214296301],
+    "global_binary_nmse_ratio": [6.641993086788305, 5.819641381409218],
+    "global_ternary_code_agreement": [0.6242774924651016, 0.6202342033562924],
+    "global_ternary_nmse_ratio": [4.5169405683373585, 4.302565435009627],
+    "global_binary_ternary_nonzero_sign_agreement": [0.9012314834570522, 0.8897503630139487],
+    "normalized_depth_profile_correlation": {
+      "binary_sign_agreement": 0.8390592785708973,
+      "binary_nmse_ratio": 0.9131066022028753,
+      "ternary_code_agreement": 0.8346674413934606,
+      "ternary_zero_rate": 0.9369703032785007,
+      "ternary_nmse_ratio": 0.83844991854842,
+      "binary_ternary_nonzero_sign_agreement": 0.900435676011089
+    },
+    "embedding_binary_sign_agreement": [0.999268, 0.936492],
+    "embedding_policy_conclusion": "The transformer recovery fingerprint replicates strongly, but the near-frozen binary embedding policy observed at 1.7B is not universal at 4B. At 4B, nearly all binary embedding sign changes are concentrated at positions that are zero in the ternary embedding."
+  },
+  "interpretation": [
+    "The 4B checkpoint independently replicates large binary and ternary transformer code reassignment beyond sign or magnitude thresholding.",
+    "Released 4B weights are 5.82x binary and 4.30x ternary farther from Qwen in raw NMSE than naive projection, reinforcing a functional rather than raw-weight objective.",
+    "The normalized depth profiles correlate 0.83-0.94 with 1.7B across major metrics, supporting a common depth-sensitive recovery framework.",
+    "Binary and ternary codes share strong but nonidentical lineage; 41.22% of binary flips occur at ternary-zero positions versus 18.13% at ternary-nonzero positions.",
+    "Unlike 1.7B, the 4B binary embedding reassigns about 6.35% of signs. Of those flips, 95.83% lie at positions that are zero in the released ternary embedding, revealing a scale-dependent shared embedding recovery policy rather than a universal frozen binary embedding rule."
+  ],
+  "runtime_seconds": 277.96386337280273,
+  "workflow": {
+    "run_id": 30866053680,
+    "artifact_id": 8876224815,
+    "artifact_zip_sha256": "cac782e1bb7ff261d307dc48cd76bb57fdb82a8318863267ec616cb84278cd08",
+    "summary_json_sha256": "384e46b53e676546255704533bd4c9b6687d4e87ad1ef8024ddd61d930438e80",
+    "confidence_json_sha256": "b4bd4bd6fe9aff0e502dca3bd84555fcf331058d962c66558c086865d7e5d7fe"
+  }
+}
