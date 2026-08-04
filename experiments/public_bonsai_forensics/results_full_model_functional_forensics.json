@@ -1,0 +1,122 @@
+{
+  "repositories": {
+    "base": "Qwen/Qwen3-1.7B",
+    "binary": "prism-ml/Bonsai-1.7B-unpacked",
+    "ternary": "prism-ml/Ternary-Bonsai-1.7B-unpacked"
+  },
+  "environment": {
+    "python": "3.11.15",
+    "torch": "2.13.0+cpu",
+    "transformers": "5.14.1",
+    "platform": "Linux-6.17.0-1020-azure-x86_64-with-glibc2.39",
+    "threads": 4
+  },
+  "teacher_parameter_count": 1720574976,
+  "group_size": 128,
+  "prompts": [
+    "Explain why the sky appears blue in three precise sentences.",
+    "Compute 37 times 48 and provide a compact derivation.",
+    "Return only JSON with keys action and arguments for a weather lookup in Tokyo."
+  ],
+  "aggregate": {
+    "naive_binary": {
+      "token_kl_mean": 9.810803413391113,
+      "last_token_kl": 8.848868370056152,
+      "top1_agreement": 0.0,
+      "last_token_top1_agreement": 0.0,
+      "logit_cosine": -0.18361443281173706,
+      "centered_logit_relative_rmse": 1.3641023635864258,
+      "hidden_cosine_mean": 0.11454013735055923,
+      "hidden_cka_mean": 0.8245788216590881
+    },
+    "naive_ternary": {
+      "token_kl_mean": 8.345300674438477,
+      "last_token_kl": 9.481505393981934,
+      "top1_agreement": 0.02380952425301075,
+      "last_token_top1_agreement": 0.0,
+      "logit_cosine": 0.4061916172504425,
+      "centered_logit_relative_rmse": 1.3637727499008179,
+      "hidden_cosine_mean": 0.39260783791542053,
+      "hidden_cka_mean": 0.8074190020561218
+    },
+    "released_binary": {
+      "teacher_vocabulary_size": 151936,
+      "candidate_vocabulary_size": 151669,
+      "shared_vocabulary_size": 151669,
+      "token_kl_mean": 0.6948646903038025,
+      "last_token_kl": 1.0122921466827393,
+      "top1_agreement": 0.7253968119621277,
+      "last_token_top1_agreement": 0.6666666865348816,
+      "logit_cosine": -0.3163312077522278,
+      "centered_logit_relative_rmse": 0.7892826199531555,
+      "hidden_cosine_mean": 0.7173073887825012,
+      "hidden_cka_mean": 0.6982794404029846
+    },
+    "released_ternary": {
+      "teacher_vocabulary_size": 151936,
+      "candidate_vocabulary_size": 151669,
+      "shared_vocabulary_size": 151669,
+      "token_kl_mean": 0.5384340882301331,
+      "last_token_kl": 1.0073622465133667,
+      "top1_agreement": 0.7126984596252441,
+      "last_token_top1_agreement": 0.6666666865348816,
+      "logit_cosine": -0.24196986854076385,
+      "centered_logit_relative_rmse": 0.6994661688804626,
+      "hidden_cosine_mean": 0.7716958522796631,
+      "hidden_cka_mean": 0.736821174621582
+    }
+  },
+  "comparisons": {
+    "binary": {
+      "released_over_naive_token_kl": 0.07082648189192713,
+      "released_over_naive_last_token_kl": 0.11439792121987634,
+      "released_minus_naive_top1_agreement": 0.7253968119621277,
+      "released_minus_naive_hidden_cosine": 0.602767251431942,
+      "released_minus_naive_hidden_cka": -0.12629938125610352
+    },
+    "ternary": {
+      "released_over_naive_token_kl": 0.06451943545657356,
+      "released_over_naive_last_token_kl": 0.10624496898485719,
+      "released_minus_naive_top1_agreement": 0.6888889353722334,
+      "released_minus_naive_hidden_cosine": 0.37908801436424255,
+      "released_minus_naive_hidden_cka": -0.0705978274345398
+    }
+  },
+  "selected_layer_metrics": {
+    "naive_binary": {
+      "hidden_cosine_first_mid_last": [0.8301849365234375, 0.06635858863592148, 0.10381865501403809],
+      "hidden_cka_first_mid_last": [0.9808719754219055, 0.8437489867210388, 0.4316360652446747],
+      "hidden_norm_ratio_first_mid_last": [0.8288924694061279, 0.537581741809845, 0.8589115142822266]
+    },
+    "naive_ternary": {
+      "hidden_cosine_first_mid_last": [0.9175382256507874, 0.37000033259391785, 0.4128653109073639],
+      "hidden_cka_first_mid_last": [0.995732307434082, 0.8798286318778992, 0.5212068557739258],
+      "hidden_norm_ratio_first_mid_last": [0.9170017242431641, 0.10808815807104111, 0.8992475867271423]
+    },
+    "released_binary": {
+      "hidden_cosine_first_mid_last": [0.8301453590393066, 0.6939061284065247, 0.4784722328186035],
+      "hidden_cka_first_mid_last": [0.9810855388641357, 0.8656887412071228, 0.8967782855033875],
+      "hidden_norm_ratio_first_mid_last": [0.8276424407958984, 0.5502628684043884, 0.499703049659729]
+    },
+    "released_ternary": {
+      "hidden_cosine_first_mid_last": [0.908044159412384, 0.7599757313728333, 0.5490157604217529],
+      "hidden_cka_first_mid_last": [0.989139974117279, 0.8982840180397034, 0.9089775085449219],
+      "hidden_norm_ratio_first_mid_last": [0.7055115699768066, 0.20413462817668915, 0.6125943064689636]
+    }
+  },
+  "quantized_naive_tensors": 197,
+  "quantized_naive_weights": 1720451072,
+  "runtime_seconds": 189.601233959198,
+  "workflow": {
+    "run_id": 30865043522,
+    "artifact_id": 8875836367,
+    "artifact_zip_sha256": "21cef1851cde957b88a4a208f3c50e5eb29d4e2110d2cbc962829dc7a253f6f2",
+    "extracted_json_sha256": "6eec15f15d6a90873c969cfbe6797283a5456bf930b6979db528c3e1088810bf"
+  },
+  "notes": [
+    "KL and logit metrics for released checkpoints are computed on the renormalized shared vocabulary prefix of 151669 tokens.",
+    "The original Qwen checkpoint has 151936 padded output rows; the public Bonsai checkpoints expose 151669 rows.",
+    "Per-prompt linear CKA uses short sequences and should not be treated as a standalone ranking metric.",
+    "The complete workflow artifact contains prompt-level and all-layer arrays; this committed file is a compact provenance summary."
+  ]
+}
