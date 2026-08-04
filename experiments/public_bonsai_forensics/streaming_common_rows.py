@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
-"""Common-row-safe wrapper around the streaming Bonsai forensic core."""
+"""Common-row-safe wrapper around the streaming Bonsai forensic core.
+
+Qwen serializes padded vocabulary rows while the public unpacked Bonsai models
+serialize only the tokenizer vocabulary. Random group samples can therefore
+include base embedding rows that do not exist in a released checkpoint. This
+wrapper intersects row counts deterministically and trims every already sampled
+field with the same mask before collecting the next checkpoint.
+"""
 from __future__ import annotations
 
 import gc
@@ -20,13 +27,21 @@ if SPEC is None or SPEC.loader is None:
     raise ImportError("cannot load streaming forensic core")
 _original = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(_original)
+
+# Re-export the original public API, then replace collect_matching below.
 for _name in dir(_original):
     if not _name.startswith("__"):
         globals()[_name] = getattr(_original, _name)
 
 
-def _trim_sampled_rows(item: dict[str, Any], rows: int, input_width: int, group_size: int) -> None:
-    valid_group_count = rows * (input_width // group_size)
+def _trim_sampled_rows(
+    item: dict[str, Any],
+    rows: int,
+    input_width: int,
+    group_size: int,
+) -> None:
+    groups_per_row = input_width // group_size
+    valid_group_count = rows * groups_per_row
     indices = item["indices"].to(torch.long)
     keep = indices < valid_group_count
     if not bool(keep.all()):
@@ -41,7 +56,13 @@ def _trim_sampled_rows(item: dict[str, Any], rows: int, input_width: int, group_
     item["shape"] = (int(rows), int(input_width))
 
 
-def collect_matching(repo_id: str, work: Path, base_samples: dict[str, dict[str, Any]], field: str, group_size: int) -> None:
+def collect_matching(
+    repo_id: str,
+    work: Path,
+    base_samples: dict[str, dict[str, Any]],
+    field: str,
+    group_size: int,
+) -> None:
     files, weight_map = repo_layout(repo_id, work)
     selected_by_file: dict[str, list[str]] = defaultdict(list)
     if weight_map is not None:
@@ -66,20 +87,36 @@ def collect_matching(repo_id: str, work: Path, base_samples: dict[str, dict[str,
                 tensor = handle.get_tensor(name)
                 expected_shape = tuple(base_samples[name]["shape"])
                 if tuple(tensor.shape) != expected_shape:
-                    if tensor.ndim == 2 and len(expected_shape) == 2 and int(tensor.shape[1]) == int(expected_shape[1]) and int(tensor.shape[1]) % group_size == 0:
+                    if (
+                        tensor.ndim == 2
+                        and len(expected_shape) == 2
+                        and int(tensor.shape[1]) == int(expected_shape[1])
+                        and int(tensor.shape[1]) % group_size == 0
+                    ):
                         common_rows = min(int(tensor.shape[0]), int(expected_shape[0]))
-                        _trim_sampled_rows(base_samples[name], common_rows, int(tensor.shape[1]), group_size)
+                        _trim_sampled_rows(
+                            base_samples[name],
+                            common_rows,
+                            int(tensor.shape[1]),
+                            group_size,
+                        )
                         tensor = tensor[:common_rows]
                     else:
                         continue
                 indices = base_samples[name]["indices"]
                 if indices.numel() == 0:
                     continue
-                base_samples[name][field] = sample_groups(tensor, indices, group_size).to(torch.float16)
+                base_samples[name][field] = sample_groups(
+                    tensor,
+                    indices,
+                    group_size,
+                ).to(torch.float16)
                 seen.add(name)
                 del tensor
         local.unlink(missing_ok=True)
         gc.collect()
     missing = sorted(set(base_samples) - seen)
     if missing:
-        raise RuntimeError(f"{repo_id}: {len(missing)} selected tensors missing; first={missing[:3]}")
+        raise RuntimeError(
+            f"{repo_id}: {len(missing)} selected tensors missing; first={missing[:3]}"
+        )
