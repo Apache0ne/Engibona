@@ -2,6 +2,10 @@ name: public-weight-forensics-4b
 
 on:
   workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - ci-public-4b-v13
 
 jobs:
   analyze:
@@ -20,12 +24,12 @@ jobs:
           python -m pip install safetensors huggingface_hub requests numpy pandas
       - name: Stream Qwen and public Bonsai 4B weights
         run: |
-          python experiments/public_bonsai_forensics/run_streaming_weight_forensics_tied.py \
+          python experiments/public_bonsai_forensics/run_streaming_weight_forensics_tied_common_rows.py \
             --base Qwen/Qwen3-4B \
             --binary prism-ml/Bonsai-4B-unpacked \
             --ternary prism-ml/Ternary-Bonsai-4B-unpacked \
             --group-size 128 \
-            --groups-per-tensor 512 \
+            --groups-per-tensor 1024 \
             --seed 1337 \
             --output-dir public_bonsai_forensics_4b
       - name: Tensor-cluster confidence intervals
