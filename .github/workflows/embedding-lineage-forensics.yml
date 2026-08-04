@@ -1,0 +1,36 @@
+name: embedding-lineage-forensics
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - ci-embedding-lineage-v16
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - name: Install CPU analysis dependencies
+        run: |
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu torch
+          python -m pip install huggingface_hub requests numpy pandas
+      - name: Test shared binary embedding codebook and ternary mask
+        run: |
+          python experiments/public_bonsai_forensics/run_embedding_lineage_forensics.py \
+            --block-size 128 \
+            --block-count 32 \
+            --tail-rows 1024 \
+            --output-dir embedding_lineage_forensics
+      - uses: actions/upload-artifact@v4
+        with:
+          name: embedding-lineage-forensics
+          path: embedding_lineage_forensics
+          if-no-files-found: error
