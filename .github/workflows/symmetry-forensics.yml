@@ -1,0 +1,37 @@
+name: symmetry-forensics
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - ci-symmetry-forensics-v10
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - name: Install CPU analysis dependencies
+        run: |
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu torch
+          python -m pip install safetensors huggingface_hub requests numpy pandas scipy
+      - name: Test attention-head and MLP-neuron permutations
+        run: |
+          python experiments/public_bonsai_forensics/run_symmetry_forensics.py \
+            --layers 0 13 27 \
+            --feature-count 64 \
+            --sampled-neurons 512 \
+            --threads 4 \
+            --output-dir symmetry_forensics
+      - uses: actions/upload-artifact@v4
+        with:
+          name: symmetry-forensics
+          path: symmetry_forensics
+          if-no-files-found: error
