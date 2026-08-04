@@ -1,0 +1,51 @@
+name: public-weight-forensics-27b
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - ci-public-27b-v19
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - name: Install CPU analysis dependencies
+        run: |
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu torch
+          python -m pip install safetensors huggingface_hub requests numpy pandas hf_xet
+      - name: Show available storage
+        run: |
+          free -h
+          df -h
+      - name: Stream actual Qwen3.6 and public Bonsai 27B language weights
+        run: |
+          python experiments/public_bonsai_forensics/run_qwen36_27b_weight_forensics.py \
+            --groups-per-tensor 256 \
+            --group-size 128 \
+            --seed 1337 \
+            --output-dir public_bonsai_forensics_27b
+      - name: Tensor-cluster confidence intervals
+        run: |
+          python experiments/public_bonsai_forensics/summarize_confidence.py \
+            --input public_bonsai_forensics_27b/tensor_metrics.csv \
+            --output public_bonsai_forensics_27b/confidence_intervals.json \
+            --iterations 4000
+      - name: Show final storage
+        if: always()
+        run: |
+          free -h
+          df -h
+      - uses: actions/upload-artifact@v4
+        with:
+          name: public-bonsai-forensics-27b
+          path: public_bonsai_forensics_27b
+          if-no-files-found: error
