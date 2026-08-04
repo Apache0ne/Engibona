@@ -32,7 +32,7 @@ jobs:
           df -h
       - name: Compare pooled hidden and logit alignment
         run: |
-          python experiments/public_bonsai_forensics/run_pooled_functional_alignment.py \
+          python experiments/public_bonsai_forensics/run_pooled_functional_alignment_clean.py \
             --selected-layers 0 7 14 21 28 \
             --max-length 128 \
             --logit-positions 8 \
