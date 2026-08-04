@@ -1,0 +1,38 @@
+name: recovery-budget-matrix
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - ci-code-drift-profile-v15
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e ".[hf,test]"
+      - name: Unit tests
+        run: pytest -q
+      - name: Sweep recovery duration and learning-rate budget
+        run: |
+          python experiments/official_qwen3vl_text/run_recovery_budget_matrix.py \
+            --budgets 120:7e-4 300:7e-4 600:7e-4 1200:7e-4 300:1.4e-3 600:1.4e-3 \
+            --seeds 3 \
+            --layers 8 \
+            --teacher-steps 80 \
+            --batch 12 \
+            --threads 4 \
+            --output recovery_budget_matrix.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: recovery-budget-matrix
+          path: recovery_budget_matrix.json
+          if-no-files-found: error
