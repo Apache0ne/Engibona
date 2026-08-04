@@ -2,6 +2,7 @@ name: code-structure-forensics
 
 on:
   workflow_dispatch:
+  pull_request:
 
 jobs:
   analyze:
@@ -20,7 +21,7 @@ jobs:
           python -m pip install safetensors huggingface_hub requests numpy pandas
       - name: Test simple threshold explanations of released codes
         run: |
-          python experiments/public_bonsai_forensics/run_code_structure_forensics.py \
+          python experiments/public_bonsai_forensics/run_code_structure_forensics_common_rows.py \
             --groups-per-tensor 512 \
             --output-dir code_structure_forensics
       - uses: actions/upload-artifact@v4
