@@ -28,7 +28,7 @@ jobs:
           df -h
       - name: Stream actual Qwen3.6 and public Bonsai 27B language weights
         run: |
-          python experiments/public_bonsai_forensics/run_qwen36_27b_weight_forensics.py \
+          python experiments/public_bonsai_forensics/run_qwen36_27b_weight_forensics_clean.py \
             --groups-per-tensor 256 \
             --group-size 128 \
             --seed 1337 \
