@@ -1,0 +1,38 @@
+name: official-qwen36-method-matrix
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - ci-official-qwen36-v20
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e ".[hf,test]"
+      - name: Unit tests
+        run: pytest -q
+      - name: Official Qwen3.6 hybrid architecture method matrix
+        run: |
+          python experiments/official_qwen36_text/run_official_qwen36_method_matrix.py \
+            --seeds 3 \
+            --layers 4 8 \
+            --teacher-steps 80 \
+            --recovery-steps 120 \
+            --batch 12 \
+            --threads 4 \
+            --output official_qwen36_method_matrix.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: official-qwen36-method-matrix
+          path: official_qwen36_method_matrix.json
+          if-no-files-found: error
