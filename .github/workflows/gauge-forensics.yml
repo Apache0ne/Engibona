@@ -24,7 +24,7 @@ jobs:
           python -m pip install safetensors huggingface_hub requests numpy pandas
       - name: Test row-column gauges and separable scale changes
         run: |
-          python experiments/public_bonsai_forensics/run_gauge_forensics.py \
+          python experiments/public_bonsai_forensics/run_gauge_forensics_common_rows.py \
             --rows-per-tensor 128 \
             --group-columns-per-tensor 32 \
             --output-dir gauge_forensics
