@@ -1,0 +1,304 @@
+{
+  "implementation": "transformers.Qwen3VLTextModel",
+  "arguments": {
+    "seeds": 3,
+    "layers": [
+      4
+    ],
+    "teacher_steps": 600,
+    "recovery_steps": 600,
+    "batch": 12,
+    "threads": 1,
+    "output": "experiments/long_all_methods/results_ternary_schedules_600x3.json"
+  },
+  "by_depth": {
+    "4": {
+      "runs": [
+        {
+          "seed": 6500,
+          "layers": 4,
+          "methods": {
+            "teacher": {
+              "ce": 5.244909763336182,
+              "accuracy": 0.1399739533662796,
+              "teacher_kl": 1.0219587398552221e-09,
+              "hidden_cosine": 1.0
+            },
+            "hard": {
+              "ce": 4.356892108917236,
+              "accuracy": 0.1546223908662796,
+              "teacher_kl": 1.2427033185958862,
+              "hidden_cosine": 0.8218561410903931,
+              "exact_alphabet": true,
+              "code_change_rate": 0.17348335884712837,
+              "zero_ratio": 0.28875402502111486,
+              "mean_abs_log_scale_change": 0.026505548506975174
+            },
+            "catq_hard25": {
+              "ce": 4.313577651977539,
+              "accuracy": 0.1656901091337204,
+              "teacher_kl": 1.2380748987197876,
+              "hidden_cosine": 0.8239123225212097,
+              "exact_alphabet": true,
+              "code_change_rate": 0.1599830421241554,
+              "zero_ratio": 0.29250356313344594,
+              "mean_abs_log_scale_change": 0.026615582406520844
+            },
+            "catq_hard50": {
+              "ce": 4.4025702476501465,
+              "accuracy": 0.1513671875,
+              "teacher_kl": 1.0875277519226074,
+              "hidden_cosine": 0.8407068252563477,
+              "exact_alphabet": true,
+              "code_change_rate": 0.12862746779983109,
+              "zero_ratio": 0.3018138988597973,
+              "mean_abs_log_scale_change": 0.027081632986664772
+            },
+            "catq_hard75": {
+              "ce": 4.514973163604736,
+              "accuracy": 0.1438802033662796,
+              "teacher_kl": 0.9718170166015625,
+              "hidden_cosine": 0.8532926440238953,
+              "exact_alphabet": true,
+              "code_change_rate": 0.10624736064189189,
+              "zero_ratio": 0.30462316564611486,
+              "mean_abs_log_scale_change": 0.02690093033015728
+            },
+            "categorical_hard50": {
+              "ce": 4.413259983062744,
+              "accuracy": 0.1536458283662796,
+              "teacher_kl": 1.2231706380844116,
+              "hidden_cosine": 0.822342574596405,
+              "exact_alphabet": true,
+              "code_change_rate": 0.15701541385135134,
+              "zero_ratio": 0.2927905933277027,
+              "mean_abs_log_scale_change": 0.028244122862815857
+            }
+          }
+        },
+        {
+          "seed": 6501,
+          "layers": 4,
+          "methods": {
+            "teacher": {
+              "ce": 5.732049942016602,
+              "accuracy": 0.1048177108168602,
+              "teacher_kl": 2.7575644545585476e-10,
+              "hidden_cosine": 1.0
+            },
+            "hard": {
+              "ce": 4.89749813079834,
+              "accuracy": 0.1119791641831398,
+              "teacher_kl": 1.2360037565231323,
+              "hidden_cosine": 0.8240033984184265,
+              "exact_alphabet": true,
+              "code_change_rate": 0.17497954497466217,
+              "zero_ratio": 0.2894419077280405,
+              "mean_abs_log_scale_change": 0.026847580447793007
+            },
+            "catq_hard25": {
+              "ce": 4.94228982925415,
+              "accuracy": 0.1106770858168602,
+              "teacher_kl": 1.2756284475326538,
+              "hidden_cosine": 0.8270339965820312,
+              "exact_alphabet": true,
+              "code_change_rate": 0.16155181059966217,
+              "zero_ratio": 0.2938974741342905,
+              "mean_abs_log_scale_change": 0.02663106471300125
+            },
+            "catq_hard50": {
+              "ce": 4.958981037139893,
+              "accuracy": 0.107421875,
+              "teacher_kl": 1.0938154458999634,
+              "hidden_cosine": 0.8435707092285156,
+              "exact_alphabet": true,
+              "code_change_rate": 0.13203388935810811,
+              "zero_ratio": 0.30201020111908783,
+              "mean_abs_log_scale_change": 0.027706151828169823
+            },
+            "catq_hard75": {
+              "ce": 5.163519859313965,
+              "accuracy": 0.1061197891831398,
+              "teacher_kl": 0.945429801940918,
+              "hidden_cosine": 0.8584350347518921,
+              "exact_alphabet": true,
+              "code_change_rate": 0.10960429423564189,
+              "zero_ratio": 0.3057184992609797,
+              "mean_abs_log_scale_change": 0.028187163174152374
+            },
+            "categorical_hard50": {
+              "ce": 4.947925090789795,
+              "accuracy": 0.1005859375,
+              "teacher_kl": 1.2581795454025269,
+              "hidden_cosine": 0.8244739770889282,
+              "exact_alphabet": true,
+              "code_change_rate": 0.1597999366554054,
+              "zero_ratio": 0.2937869510135135,
+              "mean_abs_log_scale_change": 0.02882368490099907
+            }
+          }
+        },
+        {
+          "seed": 6502,
+          "layers": 4,
+          "methods": {
+            "teacher": {
+              "ce": 4.914088249206543,
+              "accuracy": 0.1682942658662796,
+              "teacher_kl": 1.6443354455830672e-09,
+              "hidden_cosine": 1.0
+            },
+            "hard": {
+              "ce": 4.078105449676514,
+              "accuracy": 0.189453125,
+              "teacher_kl": 1.2193355560302734,
+              "hidden_cosine": 0.8251060247421265,
+              "exact_alphabet": true,
+              "code_change_rate": 0.17189644478462837,
+              "zero_ratio": 0.28961346600506754,
+              "mean_abs_log_scale_change": 0.025915388017892838
+            },
+            "catq_hard25": {
+              "ce": 4.026263236999512,
+              "accuracy": 0.1832682341337204,
+              "teacher_kl": 1.1488289833068848,
+              "hidden_cosine": 0.8306735157966614,
+              "exact_alphabet": true,
+              "code_change_rate": 0.15778082770270271,
+              "zero_ratio": 0.2935840503589527,
+              "mean_abs_log_scale_change": 0.026058277115225792
+            },
+            "catq_hard50": {
+              "ce": 4.1808037757873535,
+              "accuracy": 0.1796875,
+              "teacher_kl": 1.0401602983474731,
+              "hidden_cosine": 0.8456376194953918,
+              "exact_alphabet": true,
+              "code_change_rate": 0.1265060837204392,
+              "zero_ratio": 0.3027294262035473,
+              "mean_abs_log_scale_change": 0.02637055329978466
+            },
+            "catq_hard75": {
+              "ce": 4.344018459320068,
+              "accuracy": 0.1754557341337204,
+              "teacher_kl": 0.9106485843658447,
+              "hidden_cosine": 0.8612704277038574,
+              "exact_alphabet": true,
+              "code_change_rate": 0.10485674883868243,
+              "zero_ratio": 0.3050685573268581,
+              "mean_abs_log_scale_change": 0.02629123255610466
+            },
+            "categorical_hard50": {
+              "ce": 4.122522354125977,
+              "accuracy": 0.1839192658662796,
+              "teacher_kl": 1.1541948318481445,
+              "hidden_cosine": 0.8311812281608582,
+              "exact_alphabet": true,
+              "code_change_rate": 0.15548788534628377,
+              "zero_ratio": 0.2926437790329392,
+              "mean_abs_log_scale_change": 0.02776515856385231
+            }
+          }
+        }
+      ],
+      "aggregate": {
+        "teacher": {
+          "ce_mean": 5.297015984853108,
+          "ce_pstdev": 0.33595796013464985,
+          "accuracy_mean": 0.13769531001647314,
+          "accuracy_pstdev": 0.025964237223178165,
+          "teacher_kl_mean": 9.806835436313814e-10,
+          "teacher_kl_pstdev": 5.59481814577732e-10,
+          "hidden_cosine_mean": 1.0,
+          "hidden_cosine_pstdev": 0.0
+        },
+        "hard": {
+          "ce_mean": 4.444165229797363,
+          "ce_pstdev": 0.3401602952434059,
+          "accuracy_mean": 0.1520182266831398,
+          "accuracy_pstdev": 0.03168217063778573,
+          "teacher_kl_mean": 1.232680877049764,
+          "teacher_kl_pstdev": 0.009824941995642622,
+          "hidden_cosine_mean": 0.8236551880836487,
+          "hidden_cosine_pstdev": 0.0013494131478499754,
+          "code_change_rate_mean": 0.17345311620213963,
+          "code_change_rate_pstdev": 0.0012588520322443378,
+          "zero_ratio_mean": 0.28926979958474097,
+          "zero_ratio_pstdev": 0.0003713718809736878,
+          "mean_abs_log_scale_change_mean": 0.026422838990887005,
+          "mean_abs_log_scale_change_pstdev": 0.0003850336172591078,
+          "all_exact_alphabet": true
+        },
+        "catq_hard25": {
+          "ce_mean": 4.427376906077067,
+          "ce_pstdev": 0.3825257133881052,
+          "accuracy_mean": 0.153211809694767,
+          "accuracy_pstdev": 0.0309208631957587,
+          "teacher_kl_mean": 1.2208441098531086,
+          "teacher_kl_pstdev": 0.05318020368339814,
+          "hidden_cosine_mean": 0.8272066116333008,
+          "hidden_cosine_pstdev": 0.0027629429471666346,
+          "code_change_rate_mean": 0.15977189347550677,
+          "code_change_rate_pstdev": 0.00154672036174606,
+          "zero_ratio_mean": 0.2933283625422297,
+          "zero_ratio_pstdev": 0.0005970924910398718,
+          "mean_abs_log_scale_change_mean": 0.026434974744915962,
+          "mean_abs_log_scale_change_pstdev": 0.0002664404293822953,
+          "all_exact_alphabet": true
+        },
+        "catq_hard50": {
+          "ce_mean": 4.514118353525798,
+          "ce_pstdev": 0.32733489218726086,
+          "accuracy_mean": 0.14615885416666666,
+          "accuracy_pstdev": 0.02973129878588656,
+          "teacher_kl_mean": 1.073834498723348,
+          "teacher_kl_pstdev": 0.02394921852732216,
+          "hidden_cosine_mean": 0.8433050513267517,
+          "hidden_cosine_pstdev": 0.0020217341644448127,
+          "code_change_rate_mean": 0.12905581362612614,
+          "code_change_rate_pstdev": 0.0022769524811524357,
+          "zero_ratio_mean": 0.3021845087274775,
+          "zero_ratio_pstdev": 0.00039356061459905095,
+          "mean_abs_log_scale_change_mean": 0.027052779371539753,
+          "mean_abs_log_scale_change_pstdev": 0.0005456373982695162,
+          "all_exact_alphabet": true
+        },
+        "catq_hard75": {
+          "ce_mean": 4.67417049407959,
+          "ce_pstdev": 0.3529905368615698,
+          "accuracy_mean": 0.1418185755610466,
+          "accuracy_pstdev": 0.028343794705402076,
+          "teacher_kl_mean": 0.9426318009694418,
+          "teacher_kl_pstdev": 0.025050161444871447,
+          "hidden_cosine_mean": 0.857666035493215,
+          "hidden_cosine_pstdev": 0.003301997174029899,
+          "code_change_rate_mean": 0.10690280123873873,
+          "code_change_rate_pstdev": 0.0019928202136744043,
+          "zero_ratio_mean": 0.3051367407446509,
+          "zero_ratio_pstdev": 0.00044975968828524243,
+          "mean_abs_log_scale_change_mean": 0.027126442020138104,
+          "mean_abs_log_scale_change_pstdev": 0.0007902657227587872,
+          "all_exact_alphabet": true
+        },
+        "categorical_hard50": {
+          "ce_mean": 4.494569142659505,
+          "ce_pstdev": 0.34183895233357947,
+          "accuracy_mean": 0.14605034391085306,
+          "accuracy_pstdev": 0.034442023191009113,
+          "teacher_kl_mean": 1.2118483384450276,
+          "teacher_kl_pstdev": 0.043199930671933034,
+          "hidden_cosine_mean": 0.8259992599487305,
+          "hidden_cosine_pstdev": 0.0037661045356273963,
+          "code_change_rate_mean": 0.15743441195101351,
+          "code_change_rate_pstdev": 0.0017851454056116856,
+          "zero_ratio_mean": 0.2930737744580518,
+          "zero_ratio_pstdev": 0.0005078413195292941,
+          "mean_abs_log_scale_change_mean": 0.028277655442555744,
+          "mean_abs_log_scale_change_pstdev": 0.0004327915795825534,
+          "all_exact_alphabet": true
+        }
+      }
+    }
+  },
+  "seconds": 1373.3251996040344
+}

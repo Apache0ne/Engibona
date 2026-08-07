@@ -1,0 +1,320 @@
+{
+  "implementation": "transformers.Qwen3VLTextModel",
+  "arguments": {
+    "seeds": 3,
+    "layers": [
+      4
+    ],
+    "teacher_steps": 600,
+    "recovery_steps": 600,
+    "batch": 12,
+    "threads": 1,
+    "output": "experiments/long_all_methods/results_embedding_policies_600x3.json"
+  },
+  "metric_correction": "nonzero_sign_flip_rate_vs_source compares final nonzero signs against original FP embedding signs, including positions that were initially zero",
+  "by_depth": {
+    "4": {
+      "runs": [
+        {
+          "seed": 8500,
+          "layers": 4,
+          "methods": {
+            "teacher": {
+              "ce": 4.559456825256348,
+              "accuracy": 0.1715494841337204,
+              "teacher_kl": 1.5019785415404385e-09,
+              "hidden_cosine": 1.0
+            },
+            "binary_frozen_ptq_embedding": {
+              "ce": 3.952096700668335,
+              "accuracy": 0.1705729216337204,
+              "teacher_kl": 1.3853651285171509,
+              "hidden_cosine": 0.7558454871177673,
+              "embedding": {
+                "code_change_rate": 0.0,
+                "nonzero_sign_flip_rate_vs_source": 0.0,
+                "zero_ratio": 0.0,
+                "mean_abs_log_scale_change": 0.0
+              }
+            },
+            "binary_train_embedding": {
+              "ce": 3.8633129596710205,
+              "accuracy": 0.166015625,
+              "teacher_kl": 1.4521442651748657,
+              "hidden_cosine": 0.7550485730171204,
+              "embedding": {
+                "code_change_rate": 0.0704345703125,
+                "nonzero_sign_flip_rate_vs_source": 0.0704345703125,
+                "zero_ratio": 0.0,
+                "mean_abs_log_scale_change": 0.03880985081195831
+              }
+            },
+            "ternary_sign_locked_embedding": {
+              "ce": 4.007321357727051,
+              "accuracy": 0.1715494841337204,
+              "teacher_kl": 0.8237715363502502,
+              "hidden_cosine": 0.8696495294570923,
+              "embedding": {
+                "code_change_rate": 0.08917236328125,
+                "nonzero_sign_flip_rate_vs_source": 0.0,
+                "zero_ratio": 0.28118896484375,
+                "mean_abs_log_scale_change": 0.07034662365913391
+              }
+            },
+            "ternary_train_embedding": {
+              "ce": 4.0117645263671875,
+              "accuracy": 0.1637369841337204,
+              "teacher_kl": 0.838203489780426,
+              "hidden_cosine": 0.8684333562850952,
+              "embedding": {
+                "code_change_rate": 0.0875244140625,
+                "nonzero_sign_flip_rate_vs_source": 0.0002553191443439573,
+                "zero_ratio": 0.2828369140625,
+                "mean_abs_log_scale_change": 0.06992661207914352
+              }
+            },
+            "ternary_frozen_ptq_embedding": {
+              "ce": 3.9475290775299072,
+              "accuracy": 0.1774088591337204,
+              "teacher_kl": 0.8010076880455017,
+              "hidden_cosine": 0.8645181655883789,
+              "embedding": {
+                "code_change_rate": 0.0,
+                "nonzero_sign_flip_rate_vs_source": 0.0,
+                "zero_ratio": 0.28857421875,
+                "mean_abs_log_scale_change": 0.0
+              }
+            }
+          }
+        },
+        {
+          "seed": 8501,
+          "layers": 4,
+          "methods": {
+            "teacher": {
+              "ce": 6.007222652435303,
+              "accuracy": 0.12109375,
+              "teacher_kl": 1.37870811989238e-10,
+              "hidden_cosine": 1.0
+            },
+            "binary_frozen_ptq_embedding": {
+              "ce": 5.070528507232666,
+              "accuracy": 0.10546875,
+              "teacher_kl": 2.0844271183013916,
+              "hidden_cosine": 0.6956654787063599,
+              "embedding": {
+                "code_change_rate": 0.0,
+                "nonzero_sign_flip_rate_vs_source": 0.0,
+                "zero_ratio": 0.0,
+                "mean_abs_log_scale_change": 0.0
+              }
+            },
+            "binary_train_embedding": {
+              "ce": 5.1067328453063965,
+              "accuracy": 0.1123046875,
+              "teacher_kl": 2.126809597015381,
+              "hidden_cosine": 0.6926904916763306,
+              "embedding": {
+                "code_change_rate": 0.06939697265625,
+                "nonzero_sign_flip_rate_vs_source": 0.06939697265625,
+                "zero_ratio": 0.0,
+                "mean_abs_log_scale_change": 0.05082743614912033
+              }
+            },
+            "ternary_sign_locked_embedding": {
+              "ce": 4.993140697479248,
+              "accuracy": 0.125,
+              "teacher_kl": 1.326033115386963,
+              "hidden_cosine": 0.8195327520370483,
+              "embedding": {
+                "code_change_rate": 0.0931396484375,
+                "nonzero_sign_flip_rate_vs_source": 0.0,
+                "zero_ratio": 0.30035400390625,
+                "mean_abs_log_scale_change": 0.07106859236955643
+              }
+            },
+            "ternary_train_embedding": {
+              "ce": 4.9834303855896,
+              "accuracy": 0.1295572966337204,
+              "teacher_kl": 1.32937753200531,
+              "hidden_cosine": 0.8176500201225281,
+              "embedding": {
+                "code_change_rate": 0.09320068359375,
+                "nonzero_sign_flip_rate_vs_source": 0.00017340037447866052,
+                "zero_ratio": 0.2960205078125,
+                "mean_abs_log_scale_change": 0.07014613598585129
+              }
+            },
+            "ternary_frozen_ptq_embedding": {
+              "ce": 4.95511531829834,
+              "accuracy": 0.1256510466337204,
+              "teacher_kl": 1.3376885652542114,
+              "hidden_cosine": 0.8155189752578735,
+              "embedding": {
+                "code_change_rate": 0.0,
+                "nonzero_sign_flip_rate_vs_source": 0.0,
+                "zero_ratio": 0.29962158203125,
+                "mean_abs_log_scale_change": 0.0
+              }
+            }
+          }
+        },
+        {
+          "seed": 8502,
+          "layers": 4,
+          "methods": {
+            "teacher": {
+              "ce": 5.393635272979736,
+              "accuracy": 0.15625,
+              "teacher_kl": -1.3694785756801497e-11,
+              "hidden_cosine": 1.0
+            },
+            "binary_frozen_ptq_embedding": {
+              "ce": 4.529073238372803,
+              "accuracy": 0.1442057341337204,
+              "teacher_kl": 1.9664225578308105,
+              "hidden_cosine": 0.6998707056045532,
+              "embedding": {
+                "code_change_rate": 0.0,
+                "nonzero_sign_flip_rate_vs_source": 0.0,
+                "zero_ratio": 0.0,
+                "mean_abs_log_scale_change": 0.0
+              }
+            },
+            "binary_train_embedding": {
+              "ce": 4.477546691894531,
+              "accuracy": 0.1513671875,
+              "teacher_kl": 1.9988042116165161,
+              "hidden_cosine": 0.6989662051200867,
+              "embedding": {
+                "code_change_rate": 0.073974609375,
+                "nonzero_sign_flip_rate_vs_source": 0.073974609375,
+                "zero_ratio": 0.0,
+                "mean_abs_log_scale_change": 0.04299277812242508
+              }
+            },
+            "ternary_sign_locked_embedding": {
+              "ce": 4.49260950088501,
+              "accuracy": 0.1591796875,
+              "teacher_kl": 1.2502232789993286,
+              "hidden_cosine": 0.8236936330795288,
+              "embedding": {
+                "code_change_rate": 0.09002685546875,
+                "nonzero_sign_flip_rate_vs_source": 0.0,
+                "zero_ratio": 0.2906494140625,
+                "mean_abs_log_scale_change": 0.06645331531763077
+              }
+            },
+            "ternary_train_embedding": {
+              "ce": 4.475642681121826,
+              "accuracy": 0.158203125,
+              "teacher_kl": 1.1710304021835327,
+              "hidden_cosine": 0.8278366327285767,
+              "embedding": {
+                "code_change_rate": 0.08905029296875,
+                "nonzero_sign_flip_rate_vs_source": 0.00043014451512135565,
+                "zero_ratio": 0.29052734375,
+                "mean_abs_log_scale_change": 0.06555331498384476
+              }
+            },
+            "ternary_frozen_ptq_embedding": {
+              "ce": 4.446843147277832,
+              "accuracy": 0.1676432341337204,
+              "teacher_kl": 1.1356487274169922,
+              "hidden_cosine": 0.8290034532546997,
+              "embedding": {
+                "code_change_rate": 0.0,
+                "nonzero_sign_flip_rate_vs_source": 0.0,
+                "zero_ratio": 0.29705810546875,
+                "mean_abs_log_scale_change": 0.0
+              }
+            }
+          }
+        }
+      ],
+      "aggregate": {
+        "teacher": {
+          "ce_mean": 5.320104916890462,
+          "ce_pstdev": 0.5933304349386619,
+          "accuracy_mean": 0.14963107804457346,
+          "accuracy_pstdev": 0.021123492019269132,
+          "teacher_kl_mean": 5.420515225909583e-10,
+          "teacher_kl_pstdev": 6.815853792871222e-10,
+          "hidden_cosine_mean": 1.0,
+          "hidden_cosine_pstdev": 0.0
+        },
+        "binary_frozen_ptq_embedding": {
+          "ce_mean": 4.5172328154246015,
+          "ce_pstdev": 0.45667462756714255,
+          "accuracy_mean": 0.14008246858914694,
+          "accuracy_pstdev": 0.02673810364868248,
+          "teacher_kl_mean": 1.8120716015497844,
+          "teacher_kl_pstdev": 0.30554877370498035,
+          "hidden_cosine_mean": 0.7171272238095602,
+          "hidden_cosine_pstdev": 0.02743172030720482,
+          "embedding_code_change_rate_mean": 0.0,
+          "embedding_nonzero_sign_flip_rate_vs_source_mean": 0.0,
+          "embedding_zero_ratio_mean": 0.0,
+          "embedding_mean_abs_log_scale_change_mean": 0.0
+        },
+        "binary_train_embedding": {
+          "ce_mean": 4.482530832290649,
+          "ce_pstdev": 0.5076362767704117,
+          "accuracy_mean": 0.14322916666666666,
+          "accuracy_pstdev": 0.022669902794896026,
+          "teacher_kl_mean": 1.859252691268921,
+          "teacher_kl_pstdev": 0.29257397653740164,
+          "hidden_cosine_mean": 0.7155684232711792,
+          "hidden_cosine_pstdev": 0.028034000936701713,
+          "embedding_code_change_rate_mean": 0.07126871744791667,
+          "embedding_nonzero_sign_flip_rate_vs_source_mean": 0.07126871744791667,
+          "embedding_zero_ratio_mean": 0.0,
+          "embedding_mean_abs_log_scale_change_mean": 0.04421002169450124
+        },
+        "ternary_sign_locked_embedding": {
+          "ce_mean": 4.497690518697103,
+          "ce_pstdev": 0.4024750967152044,
+          "accuracy_mean": 0.1519097238779068,
+          "accuracy_pstdev": 0.019686761991734286,
+          "teacher_kl_mean": 1.1333426435788472,
+          "teacher_kl_pstdev": 0.22107688805230125,
+          "hidden_cosine_mean": 0.8376253048578898,
+          "hidden_cosine_pstdev": 0.022708169655398503,
+          "embedding_code_change_rate_mean": 0.09077962239583333,
+          "embedding_nonzero_sign_flip_rate_vs_source_mean": 0.0,
+          "embedding_zero_ratio_mean": 0.2907307942708333,
+          "embedding_mean_abs_log_scale_change_mean": 0.0692895104487737
+        },
+        "ternary_train_embedding": {
+          "ce_mean": 4.490279197692871,
+          "ce_pstdev": 0.39681591551382106,
+          "accuracy_mean": 0.1504991352558136,
+          "accuracy_pstdev": 0.014979460446075508,
+          "teacher_kl_mean": 1.1128704746564229,
+          "teacher_kl_pstdev": 0.20469476107341233,
+          "hidden_cosine_mean": 0.8379733363787333,
+          "hidden_cosine_pstdev": 0.021936292281945297,
+          "embedding_code_change_rate_mean": 0.08992513020833333,
+          "embedding_nonzero_sign_flip_rate_vs_source_mean": 0.0002862880113146578,
+          "embedding_zero_ratio_mean": 0.289794921875,
+          "embedding_mean_abs_log_scale_change_mean": 0.06854202101627986
+        },
+        "ternary_frozen_ptq_embedding": {
+          "ce_mean": 4.449829181035359,
+          "ce_pstdev": 0.41135077929885766,
+          "accuracy_mean": 0.1569010466337204,
+          "accuracy_pstdev": 0.02245385984502674,
+          "teacher_kl_mean": 1.0914483269055684,
+          "teacher_kl_pstdev": 0.2213170388747106,
+          "hidden_cosine_mean": 0.8363468647003174,
+          "hidden_cosine_pstdev": 0.020666791913695658,
+          "embedding_code_change_rate_mean": 0.0,
+          "embedding_nonzero_sign_flip_rate_vs_source_mean": 0.0,
+          "embedding_zero_ratio_mean": 0.2950846354166667,
+          "embedding_mean_abs_log_scale_change_mean": 0.0
+        }
+      }
+    }
+  },
+  "seconds": 1025.4359443187714
+}

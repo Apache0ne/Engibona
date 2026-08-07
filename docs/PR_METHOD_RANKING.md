@@ -17,10 +17,10 @@ Closing a PR does not delete its branch. Rejected implementations and unvalidate
 |---:|---|---|---|
 | 1 | Binary exact-hard STE with learned free g128 scales and public depth/module pressure | **Selected binary default** | Exact train/deploy forward. At 600 steps: KL 0.02185, 20.08% code movement, 71.99% of the public movement target. |
 | 1 | Ternary exact-hard STE with learned free g128 scales and public depth/module pressure | **Selected ternary default** | Best joint behavior/geometry result. At 600 steps: KL 0.02048, 32.81% movement, 87.06% target coverage. |
-| 2 | Binary categorical relaxation followed by hard export | Behavior specialist | Lowest binary KL, 0.01917, but only 59.83% code-movement target coverage. Retain as an ablation and possible initialization phase, not the geometry default. |
-| 2 | Ternary CAT-Q/auto soft-to-hard recovery | Hidden-alignment specialist | Best hidden cosine, 0.86822, but only 75.80% movement target coverage. Retain as a soft phase; final hard recovery remains necessary. |
-| 2 | Shared binary embedding codebook, shared scale, and ternary mask | **Selected representation/export option** | Direct checkpoint algebra is effectively exact across sampled embeddings. Jointly forcing this state during recovery was 4-12% worse in combined teacher KL than independent per-mode recovery, so shared joint optimization is not the default. |
-| 3 | Mild binary row/group scale-residual prior, coefficient 0.1 | Experimental option | Improved five of six pairs and mean KL by 1.32%, but exact paired p=0.1875. More seeds are required before enabling by default. |
+| 2 | Binary categorical relaxation followed by hard export | **Long-run behavior specialist** | Lowest binary KL in both 600-step official-architecture matrices: 1.6940 on Qwen3-VL and 3.6803 on Qwen3.6. It still moves fewer codes than hard recovery and does not use the deployment forward throughout training. |
+| 2 | Ternary CAT-Q/auto soft-to-hard recovery | **Long-run behavior specialist** | Lowest ternary KL in both 600-step architecture matrices. Hardening at 75% reached KL 0.9426 and cosine 0.8577, but moved only 10.69% of codes versus 17.35% for sustained hard recovery. |
+| 2 | Shared binary embedding codebook, shared scale, and ternary mask | **Selected representation; competitive joint option** | The 600-step frozen-sign shared policy obeyed the relation exactly and improved combined KL by 0.81% versus independent recovery. It slightly worsened binary KL while improving ternary KL, so it is not yet a universal behavior default. |
+| 3 | Mild binary row/group scale-residual prior, coefficient 0.1 | Experimental option | In the new 600-step run it improved all three paired seeds and mean KL by 1.04%, with exact paired p=0.25. This reinforces the signal but still does not justify a mandatory default. |
 | 4 | Strong or hard-separable scale constraints | Rejected | Strong coefficients reconstruct scale structure but do not reliably improve behavior; coefficient 1000 is worse for both modes. Free per-group residuals remain necessary. |
 
 ## Methods ruled out or demoted
@@ -48,6 +48,13 @@ Closing a PR does not delete its branch. Rejected implementations and unvalidate
 6. The official Qwen3.6 hybrid miniature independently favors exact-hard recovery:
    - binary KL: 0.04554 naive to 0.01839 hard;
    - ternary KL: 0.03134 naive to 0.01332 hard.
+
+The newer 600-step Qwen3.6 run shows that this was budget-dependent:
+
+- binary: 4.57244 naive, 3.69242 hard, **3.68029 categorical**;
+- ternary: 3.68721 naive, 3.06286 hard, **2.98497 CAT-Q-to-hard**.
+
+Its FP32 teacher stayed at chance accuracy, so these values select recovery mechanics only and cannot estimate retained intelligence.
 
 The four-scale byte-range lineage run covered 1,202 tensors and 19.69 million sampled weights with zero tensor failures. Shared binary-backbone plus ternary-mask agreement was 93.93% at 1.7B, 92.99% at 4B, 94.31% at 8B, and 98.33% at 27B. This supports shared initialization and compact final-state analysis, not a claim that the private trainer used one shared latent state.
 
@@ -77,11 +84,11 @@ binary:
     exact-hard STE recovery
     free learned positive per-group scales
     public depth/module pressure
-    optional categorical comparison, not default
+    categorical option when behavior KL is prioritized
 
 ternary:
     exact g128 {-1,0,+1}
-    optional CAT-Q soft phase
+    CAT-Q soft phase favored for long-run behavior
     sustained exact-hard recovery
     free learned positive per-group scales
     public depth/module pressure

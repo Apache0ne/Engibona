@@ -1,0 +1,47 @@
+{
+  "implementation": "transformers.Qwen3VLTextModel",
+  "purpose": "FP32 baseline replay for a historical matrix schema",
+  "group": "shared_embedding",
+  "arguments": {
+    "group": "shared_embedding",
+    "layers": 4,
+    "teacher_steps": 600,
+    "batch": 12,
+    "threads": 1,
+    "output": "experiments/long_all_methods/results_teacher_shared_embedding_600x3.json"
+  },
+  "runs": [
+    {
+      "seed": 19000,
+      "ce": 5.273066997528076,
+      "accuracy": 0.1243489608168602,
+      "teacher_kl": 1.1316999559696228e-09,
+      "hidden_cosine": 1.0
+    },
+    {
+      "seed": 19001,
+      "ce": 5.293814182281494,
+      "accuracy": 0.1422526091337204,
+      "teacher_kl": 1.3248949715105596e-09,
+      "hidden_cosine": 1.0
+    },
+    {
+      "seed": 19002,
+      "ce": 5.97277307510376,
+      "accuracy": 0.1412760466337204,
+      "teacher_kl": 1.2160000784078306e-09,
+      "hidden_cosine": 1.0
+    }
+  ],
+  "aggregate": {
+    "ce_mean": 5.51321808497111,
+    "ce_pstdev": 0.32506481726538067,
+    "accuracy_mean": 0.13595920552810034,
+    "accuracy_pstdev": 0.008219357447321584,
+    "teacher_kl_mean": 1.2241983352960044e-09,
+    "teacher_kl_pstdev": 7.90842886607661e-11,
+    "hidden_cosine_mean": 1.0,
+    "hidden_cosine_pstdev": 0.0
+  },
+  "seconds": 72.20725750923157
+}

@@ -1,0 +1,324 @@
+{
+  "implementation": "transformers.Qwen3VLTextModel",
+  "arguments": {
+    "seeds": 3,
+    "layers": [
+      4
+    ],
+    "teacher_steps": 600,
+    "recovery_steps": 600,
+    "batch": 12,
+    "threads": 1,
+    "output": "experiments/long_all_methods/results_losses_600x3.json"
+  },
+  "by_depth": {
+    "4": {
+      "runs": [
+        {
+          "seed": 7500,
+          "layers": 4,
+          "methods": {
+            "teacher": {
+              "ce": 4.700325965881348,
+              "accuracy": 0.1748046875,
+              "teacher_kl": 6.575250899309992e-10,
+              "hidden_cosine": 1.0
+            },
+            "ce_only": {
+              "ce": 4.497138500213623,
+              "accuracy": 0.1728515625,
+              "teacher_kl": 2.2309813499450684,
+              "hidden_cosine": 0.7093525528907776,
+              "code_change_rate": 0.11708027607685811,
+              "exact_alphabet": true,
+              "weights": {
+                "ce": 1.0,
+                "kd": 0.0,
+                "hidden": 0.0
+              }
+            },
+            "kd_only": {
+              "ce": 4.063417911529541,
+              "accuracy": 0.16796875,
+              "teacher_kl": 1.6424212455749512,
+              "hidden_cosine": 0.7362352013587952,
+              "code_change_rate": 0.11220241237331081,
+              "exact_alphabet": true,
+              "weights": {
+                "ce": 0.0,
+                "kd": 1.0,
+                "hidden": 0.0
+              }
+            },
+            "kd_ce": {
+              "ce": 4.045579433441162,
+              "accuracy": 0.1764322966337204,
+              "teacher_kl": 1.705979347229004,
+              "hidden_cosine": 0.7319187521934509,
+              "code_change_rate": 0.11264450485641891,
+              "exact_alphabet": true,
+              "weights": {
+                "ce": 0.2,
+                "kd": 1.0,
+                "hidden": 0.0
+              }
+            },
+            "kd_hidden": {
+              "ce": 4.035736560821533,
+              "accuracy": 0.1656901091337204,
+              "teacher_kl": 1.5751172304153442,
+              "hidden_cosine": 0.7473045587539673,
+              "code_change_rate": 0.11235417546452703,
+              "exact_alphabet": true,
+              "weights": {
+                "ce": 0.0,
+                "kd": 1.0,
+                "hidden": 0.1
+              }
+            },
+            "kd_ce_hidden": {
+              "ce": 4.146890163421631,
+              "accuracy": 0.16796875,
+              "teacher_kl": 1.6735650300979614,
+              "hidden_cosine": 0.74039226770401,
+              "code_change_rate": 0.1128639014991554,
+              "exact_alphabet": true,
+              "weights": {
+                "ce": 0.2,
+                "kd": 1.0,
+                "hidden": 0.1
+              }
+            }
+          }
+        },
+        {
+          "seed": 7501,
+          "layers": 4,
+          "methods": {
+            "teacher": {
+              "ce": 5.922486782073975,
+              "accuracy": 0.103515625,
+              "teacher_kl": 1.6282148962432075e-09,
+              "hidden_cosine": 1.0
+            },
+            "ce_only": {
+              "ce": 5.364204406738281,
+              "accuracy": 0.1100260391831398,
+              "teacher_kl": 2.5640859603881836,
+              "hidden_cosine": 0.6943963170051575,
+              "code_change_rate": 0.11814921611064189,
+              "exact_alphabet": true,
+              "weights": {
+                "ce": 1.0,
+                "kd": 0.0,
+                "hidden": 0.0
+              }
+            },
+            "kd_only": {
+              "ce": 4.936070919036865,
+              "accuracy": 0.1123046875,
+              "teacher_kl": 1.85943603515625,
+              "hidden_cosine": 0.7268306016921997,
+              "code_change_rate": 0.11417038376266891,
+              "exact_alphabet": true,
+              "weights": {
+                "ce": 0.0,
+                "kd": 1.0,
+                "hidden": 0.0
+              }
+            },
+            "kd_ce": {
+              "ce": 5.04923677444458,
+              "accuracy": 0.1005859375,
+              "teacher_kl": 1.89190673828125,
+              "hidden_cosine": 0.7243129014968872,
+              "code_change_rate": 0.11481537690033784,
+              "exact_alphabet": true,
+              "weights": {
+                "ce": 0.2,
+                "kd": 1.0,
+                "hidden": 0.0
+              }
+            },
+            "kd_hidden": {
+              "ce": 4.956862926483154,
+              "accuracy": 0.1018880233168602,
+              "teacher_kl": 1.829199194908142,
+              "hidden_cosine": 0.7316229343414307,
+              "code_change_rate": 0.11372994087837837,
+              "exact_alphabet": true,
+              "weights": {
+                "ce": 0.0,
+                "kd": 1.0,
+                "hidden": 0.1
+              }
+            },
+            "kd_ce_hidden": {
+              "ce": 4.995932579040527,
+              "accuracy": 0.1041666641831398,
+              "teacher_kl": 1.8515467643737793,
+              "hidden_cosine": 0.7301129102706909,
+              "code_change_rate": 0.11419347814611487,
+              "exact_alphabet": true,
+              "weights": {
+                "ce": 0.2,
+                "kd": 1.0,
+                "hidden": 0.1
+              }
+            }
+          }
+        },
+        {
+          "seed": 7502,
+          "layers": 4,
+          "methods": {
+            "teacher": {
+              "ce": 5.740771770477295,
+              "accuracy": 0.1236979141831398,
+              "teacher_kl": 2.3079121946878445e-10,
+              "hidden_cosine": 1.0
+            },
+            "ce_only": {
+              "ce": 5.2512102127075195,
+              "accuracy": 0.1243489608168602,
+              "teacher_kl": 2.6494321823120117,
+              "hidden_cosine": 0.6782940626144409,
+              "code_change_rate": 0.11803044499577703,
+              "exact_alphabet": true,
+              "weights": {
+                "ce": 1.0,
+                "kd": 0.0,
+                "hidden": 0.0
+              }
+            },
+            "kd_only": {
+              "ce": 4.816040515899658,
+              "accuracy": 0.1256510466337204,
+              "teacher_kl": 2.060950994491577,
+              "hidden_cosine": 0.7027829885482788,
+              "code_change_rate": 0.11465701541385136,
+              "exact_alphabet": true,
+              "weights": {
+                "ce": 0.0,
+                "kd": 1.0,
+                "hidden": 0.0
+              }
+            },
+            "kd_ce": {
+              "ce": 4.814874649047852,
+              "accuracy": 0.1311848908662796,
+              "teacher_kl": 2.0597219467163086,
+              "hidden_cosine": 0.7024626135826111,
+              "code_change_rate": 0.11488136085304054,
+              "exact_alphabet": true,
+              "weights": {
+                "ce": 0.2,
+                "kd": 1.0,
+                "hidden": 0.0
+              }
+            },
+            "kd_hidden": {
+              "ce": 4.849071025848389,
+              "accuracy": 0.119140625,
+              "teacher_kl": 2.0793135166168213,
+              "hidden_cosine": 0.7048267722129822,
+              "code_change_rate": 0.11503312394425676,
+              "exact_alphabet": true,
+              "weights": {
+                "ce": 0.0,
+                "kd": 1.0,
+                "hidden": 0.1
+              }
+            },
+            "kd_ce_hidden": {
+              "ce": 4.784877300262451,
+              "accuracy": 0.1243489608168602,
+              "teacher_kl": 2.0179357528686523,
+              "hidden_cosine": 0.7067270278930664,
+              "code_change_rate": 0.1154273780616554,
+              "exact_alphabet": true,
+              "weights": {
+                "ce": 0.2,
+                "kd": 1.0,
+                "hidden": 0.1
+              }
+            }
+          }
+        }
+      ],
+      "aggregate": {
+        "teacher": {
+          "ce_mean": 5.454528172810872,
+          "ce_pstdev": 0.5384365100689957,
+          "accuracy_mean": 0.1340060755610466,
+          "accuracy_pstdev": 0.030002513797757608,
+          "teacher_kl_mean": 8.388437352143304e-10,
+          "teacher_kl_pstdev": 5.847253323558413e-10,
+          "hidden_cosine_mean": 1.0,
+          "hidden_cosine_pstdev": 0.0
+        },
+        "ce_only": {
+          "ce_mean": 5.037517706553142,
+          "ce_pstdev": 0.3848802298155112,
+          "accuracy_mean": 0.1357421875,
+          "accuracy_pstdev": 0.026883896117680967,
+          "teacher_kl_mean": 2.4814998308817544,
+          "teacher_kl_pstdev": 0.18053739477328315,
+          "hidden_cosine_mean": 0.694014310836792,
+          "hidden_cosine_pstdev": 0.012682452473025524,
+          "code_change_rate_mean": 0.11775331239442567,
+          "all_exact_alphabet": true
+        },
+        "kd_only": {
+          "ce_mean": 4.6051764488220215,
+          "ce_pstdev": 0.3862025021205724,
+          "accuracy_mean": 0.1353081613779068,
+          "accuracy_pstdev": 0.023728560321375918,
+          "teacher_kl_mean": 1.8542694250742595,
+          "teacher_kl_pstdev": 0.1709031072018255,
+          "hidden_cosine_mean": 0.7219495971997579,
+          "hidden_cosine_pstdev": 0.01408618209739475,
+          "code_change_rate_mean": 0.1136766038499437,
+          "all_exact_alphabet": true
+        },
+        "kd_ce": {
+          "ce_mean": 4.636563618977864,
+          "ce_pstdev": 0.42870201937241337,
+          "accuracy_mean": 0.13606770833333334,
+          "accuracy_pstdev": 0.03115604786953085,
+          "teacher_kl_mean": 1.8858693440755208,
+          "teacher_kl_pstdev": 0.14447789743211115,
+          "hidden_cosine_mean": 0.7195647557576498,
+          "hidden_cosine_pstdev": 0.012485316480731319,
+          "code_change_rate_mean": 0.1141137475365991,
+          "all_exact_alphabet": true
+        },
+        "kd_hidden": {
+          "ce_mean": 4.613890171051025,
+          "ce_pstdev": 0.4111779592233842,
+          "accuracy_mean": 0.12890625248352686,
+          "accuracy_pstdev": 0.026946887869235905,
+          "teacher_kl_mean": 1.8278766473134358,
+          "teacher_kl_pstdev": 0.20583939630036105,
+          "hidden_cosine_mean": 0.7279180884361267,
+          "hidden_cosine_pstdev": 0.017538243920870174,
+          "code_change_rate_mean": 0.11370574676238739,
+          "all_exact_alphabet": true
+        },
+        "kd_ce_hidden": {
+          "ce_mean": 4.642566680908203,
+          "ce_pstdev": 0.36093165573345043,
+          "accuracy_mean": 0.13216145833333334,
+          "accuracy_pstdev": 0.026626463987659253,
+          "teacher_kl_mean": 1.847682515780131,
+          "teacher_kl_pstdev": 0.14061530971246136,
+          "hidden_cosine_mean": 0.7257440686225891,
+          "hidden_cosine_pstdev": 0.014086688181677699,
+          "code_change_rate_mean": 0.11416158590230856,
+          "all_exact_alphabet": true
+        }
+      }
+    }
+  },
+  "seconds": 910.2384667396545
+}

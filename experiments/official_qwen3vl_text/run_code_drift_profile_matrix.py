@@ -337,6 +337,7 @@ def run_seed(
     fp = TinyOfficialQwen3VL(layers=layers, tied=True)
     train_teacher(fp, train, teacher_steps, batch)
     teacher = copy.deepcopy(fp).eval()
+    teacher_baseline = evaluate(teacher, teacher, validation)
     methods = [
         (QuantMode.BINARY, "hard_ste", "uniform"),
         (QuantMode.BINARY, "hard_ste", "public"),
@@ -347,7 +348,12 @@ def run_seed(
         (QuantMode.TERNARY, "auto", "uniform"),
         (QuantMode.TERNARY, "auto", "public"),
     ]
-    output = {"seed": seed, "layers": layers, "methods": {}}
+    output = {
+        "seed": seed,
+        "layers": layers,
+        "teacher_baseline": teacher_baseline,
+        "methods": {},
+    }
     for mode, relaxation, profile in methods:
         name = f"{mode.value}_{relaxation}_{profile}"
         # Paired random minibatches within each mode.
@@ -392,6 +398,15 @@ def aggregate(runs: list[dict[str, Any]]) -> dict[str, Any]:
         output[name]["all_exact_alphabet"] = all(
             run["methods"][name]["exact_alphabet"] for run in runs
         )
+    return output
+
+
+def aggregate_teacher_baseline(runs: list[dict[str, Any]]) -> dict[str, float]:
+    output = {}
+    for metric in ("ce", "accuracy", "teacher_kl", "hidden_cosine"):
+        values = [float(run["teacher_baseline"][metric]) for run in runs]
+        output[metric + "_mean"] = statistics.mean(values)
+        output[metric + "_pstdev"] = statistics.pstdev(values)
     return output
 
 
@@ -475,6 +490,7 @@ def main() -> None:
         by_depth[str(layers)] = {
             "runs": runs,
             "aggregate": aggregate(runs),
+            "teacher_baseline": aggregate_teacher_baseline(runs),
         }
     payload = {
         "implementation": "transformers.Qwen3VLTextModel",

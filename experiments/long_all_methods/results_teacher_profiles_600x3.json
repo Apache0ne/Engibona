@@ -1,0 +1,47 @@
+{
+  "implementation": "transformers.Qwen3VLTextModel",
+  "purpose": "FP32 baseline replay for a historical matrix schema",
+  "group": "profiles",
+  "arguments": {
+    "group": "profiles",
+    "layers": 4,
+    "teacher_steps": 600,
+    "batch": 12,
+    "threads": 1,
+    "output": "experiments/long_all_methods/results_teacher_profiles_600x3.json"
+  },
+  "runs": [
+    {
+      "seed": 9500,
+      "ce": 5.494699954986572,
+      "accuracy": 0.1474609375,
+      "teacher_kl": 6.763314908120321e-10,
+      "hidden_cosine": 1.0
+    },
+    {
+      "seed": 9501,
+      "ce": 5.05318021774292,
+      "accuracy": 0.1276041716337204,
+      "teacher_kl": 8.299929077359991e-10,
+      "hidden_cosine": 1.0
+    },
+    {
+      "seed": 9502,
+      "ce": 5.391148090362549,
+      "accuracy": 0.1354166716337204,
+      "teacher_kl": 1.125542992141959e-09,
+      "hidden_cosine": 1.0
+    }
+  ],
+  "aggregate": {
+    "ce_mean": 5.313009421030681,
+    "ce_pstdev": 0.1885279083277279,
+    "accuracy_mean": 0.1368272602558136,
+    "accuracy_pstdev": 0.008167623394135562,
+    "teacher_kl_mean": 8.772891302299968e-10,
+    "teacher_kl_pstdev": 1.8641431048147035e-10,
+    "hidden_cosine_mean": 1.0,
+    "hidden_cosine_pstdev": 0.0
+  },
+  "seconds": 72.24602103233337
+}
