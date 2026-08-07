@@ -1,5 +1,7 @@
 # Official Qwen3.6 hybrid local result
 
+> This is the earlier 40-step result. The newer three-seed, 600-step matrix selects binary categorical and ternary CAT-Q-to-hard on teacher KL. See [`LONG_ALL_METHODS_600_STEP.md`](LONG_ALL_METHODS_600_STEP.md). The reversal is evidence that the preferred surrogate depends on recovery budget.
+
 The official hybrid-architecture method matrix was run locally on the CPU runtime, not through GitHub Actions.
 
 ```text

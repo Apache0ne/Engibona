@@ -118,7 +118,12 @@ def recover(model, teacher, data, mode, embedding_strategy, steps, batch):
         optimizer.step()
     for state in states:
         state.set_schedule(steps, steps)
-    return student.eval(), state_delta(initial_embedding, embedding)
+    allowed = {-1, 1} if mode == QuantMode.BINARY else {-1, 0, 1}
+    exact = all(
+        set(state.hard_codes_and_scales()[0].unique().tolist()) <= allowed
+        for state in states
+    )
+    return student.eval(), state_delta(initial_embedding, embedding), exact
 
 
 def run_one(seed, layers, teacher_steps, recovery_steps, batch):
@@ -137,7 +142,7 @@ def run_one(seed, layers, teacher_steps, recovery_steps, batch):
         ("ternary_frozen_ptq_embedding", QuantMode.TERNARY, "frozen_ptq"),
     ]
     for name, mode, strategy in specifications:
-        student, embedding_delta = recover(
+        student, embedding_delta, exact = recover(
             fp,
             teacher,
             training,
@@ -147,7 +152,8 @@ def run_one(seed, layers, teacher_steps, recovery_steps, batch):
             batch,
         )
         methods[name] = evaluate(student, teacher, validation) | {
-            "embedding": embedding_delta
+            "embedding": embedding_delta,
+            "exact_alphabet": exact,
         }
     return {"seed": seed, "layers": layers, "methods": methods}
 
@@ -169,6 +175,9 @@ def aggregate(runs):
             ):
                 values = [run["methods"][method]["embedding"][metric] for run in runs]
                 result[method]["embedding_" + metric + "_mean"] = statistics.mean(values)
+            result[method]["all_exact_alphabet"] = all(
+                run["methods"][method]["exact_alphabet"] for run in runs
+            )
     return result
 
 

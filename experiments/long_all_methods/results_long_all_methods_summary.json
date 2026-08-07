@@ -1,0 +1,183 @@
+{
+  "benchmark_contract": {
+    "seeds": 3,
+    "layers": 4,
+    "teacher_steps": 600,
+    "recovery_steps": 600,
+    "batch": 12,
+    "precision": "FP32 CPU",
+    "group_size": 128,
+    "named_low_bit_configurations": 49
+  },
+  "teacher_baselines": {
+    "surrogates": {
+      "ce_mean": 5.551724751790364,
+      "ce_pstdev": 0.21896435071119177,
+      "accuracy_mean": 0.11143663028875987,
+      "accuracy_pstdev": 0.008473274054071849,
+      "teacher_kl_mean": 4.3354862292825186e-10,
+      "teacher_kl_pstdev": 7.330591762136489e-10,
+      "hidden_cosine_mean": 1.0,
+      "hidden_cosine_pstdev": 0.0,
+      "all_exact_alphabet": true
+    },
+    "losses": {
+      "ce_mean": 5.454528172810872,
+      "ce_pstdev": 0.5384365100689957,
+      "accuracy_mean": 0.1340060755610466,
+      "accuracy_pstdev": 0.030002513797757608,
+      "teacher_kl_mean": 8.388437352143304e-10,
+      "teacher_kl_pstdev": 5.847253323558413e-10,
+      "hidden_cosine_mean": 1.0,
+      "hidden_cosine_pstdev": 0.0
+    },
+    "ternary_schedules": {
+      "ce_mean": 5.297015984853108,
+      "ce_pstdev": 0.33595796013464985,
+      "accuracy_mean": 0.13769531001647314,
+      "accuracy_pstdev": 0.025964237223178165,
+      "teacher_kl_mean": 9.806835436313814e-10,
+      "teacher_kl_pstdev": 5.59481814577732e-10,
+      "hidden_cosine_mean": 1.0,
+      "hidden_cosine_pstdev": 0.0
+    },
+    "embedding_policies": {
+      "ce_mean": 5.320104916890462,
+      "ce_pstdev": 0.5933304349386619,
+      "accuracy_mean": 0.14963107804457346,
+      "accuracy_pstdev": 0.021123492019269132,
+      "teacher_kl_mean": 5.420515225909583e-10,
+      "teacher_kl_pstdev": 6.815853792871222e-10,
+      "hidden_cosine_mean": 1.0,
+      "hidden_cosine_pstdev": 0.0
+    },
+    "qwen36_hybrid": {
+      "ce_mean": 9.842540423075357,
+      "ce_pstdev": 0.03351785301226421,
+      "accuracy_mean": 0.00390625,
+      "accuracy_pstdev": 0.0007032053828965107,
+      "teacher_kl_mean": -1.7870760427030064e-11,
+      "teacher_kl_pstdev": 3.5717695847670415e-10,
+      "hidden_cosine_mean": 1.0,
+      "hidden_cosine_pstdev": 0.0
+    },
+    "profiles": {
+      "ce_mean": 5.313009421030681,
+      "ce_pstdev": 0.1885279083277279,
+      "accuracy_mean": 0.1368272602558136,
+      "accuracy_pstdev": 0.008167623394135562,
+      "teacher_kl_mean": 8.772891302299968e-10,
+      "teacher_kl_pstdev": 1.8641431048147035e-10,
+      "hidden_cosine_mean": 1.0,
+      "hidden_cosine_pstdev": 0.0
+    },
+    "scale_structure": {
+      "ce_mean": 5.247692743937175,
+      "ce_pstdev": 0.4355220707506291,
+      "accuracy_mean": 0.1522352397441864,
+      "accuracy_pstdev": 0.008089410031615797,
+      "teacher_kl_mean": 2.0851220750017774e-10,
+      "teacher_kl_pstdev": 6.243616123629574e-10,
+      "hidden_cosine_mean": 1.0,
+      "hidden_cosine_pstdev": 0.0
+    },
+    "shared_embedding": {
+      "ce_mean": 5.51321808497111,
+      "ce_pstdev": 0.32506481726538067,
+      "accuracy_mean": 0.13595920552810034,
+      "accuracy_pstdev": 0.008219357447321584,
+      "teacher_kl_mean": 1.2241983352960044e-09,
+      "teacher_kl_pstdev": 7.90842886607661e-11,
+      "hidden_cosine_mean": 1.0,
+      "hidden_cosine_pstdev": 0.0
+    }
+  },
+  "selection": {
+    "surrogates": {
+      "binary": "binary_categorical",
+      "ternary": "ternary_catq"
+    },
+    "profiles": {
+      "binary": "binary_categorical_public",
+      "ternary": "ternary_auto_uniform"
+    },
+    "losses": "kd_hidden",
+    "ternary_schedules": "catq_hard75",
+    "embedding_policies": {
+      "binary": "binary_frozen_ptq_embedding",
+      "ternary": "ternary_frozen_ptq_embedding"
+    },
+    "scale_structure": {
+      "binary": "binary_structure_0.1",
+      "ternary": "ternary_structure_10"
+    },
+    "shared_embedding": "shared_frozen_sign",
+    "qwen36_hybrid": {
+      "binary": "binary_categorical",
+      "ternary": "ternary_catq_hard"
+    }
+  },
+  "exactness": {
+    "all_recorded_checks_passed": true,
+    "embedding_policy_runner_recorded_field": false,
+    "embedding_policy_exactness_enforced_by_shared_quant_module": true
+  },
+  "provenance": {
+    "surrogates": {
+      "file": "results_surrogates_600x3.json",
+      "sha256": "5262a14f5827fc2e0c54c9b50f97c45cae1df59ff080c11f4bf4b417e4b77761",
+      "seconds": 1399.125554561615
+    },
+    "profiles": {
+      "file": "results_profiles_600x3.json",
+      "sha256": "7c8c65a7e20dbaaaf70027188a3247fab897df1a551deab055b60fc4d2fd8766",
+      "seconds": 1640.231603860855
+    },
+    "losses": {
+      "file": "results_losses_600x3.json",
+      "sha256": "1f1d45b1039dfc2ba71e1cf84b3c0c7da0c7cebef540ddbb0ca120bfeb6397e6",
+      "seconds": 910.2384667396545
+    },
+    "ternary_schedules": {
+      "file": "results_ternary_schedules_600x3.json",
+      "sha256": "d999452f9503a5ea2a0cee7ee2ab4b00c386a79d69394c930ad6544751688c3f",
+      "seconds": 1373.3251996040344
+    },
+    "embedding_policies": {
+      "file": "results_embedding_policies_600x3.json",
+      "sha256": "6f2957dc0c74de2c4bbcaf48fa85a0682364c0b41a177b93505c116d47dd6abb",
+      "seconds": 1025.4359443187714
+    },
+    "scale_structure": {
+      "file": "results_scale_structure_600x3.json",
+      "sha256": "e254acc1349c01e586c0b53473ef9eda30f278039b38b75b4edf2c528110536b",
+      "seconds": 1706.5661988258362
+    },
+    "shared_embedding": {
+      "file": "results_shared_embedding_600x3.json",
+      "sha256": "9820ab7d8859920702332e908505e98074817354c53496ce477102e0053e6a8b",
+      "seconds": 1301.7231500148773
+    },
+    "qwen36_hybrid": {
+      "file": "results_qwen36_hybrid_600x3.json",
+      "sha256": "6601ff9a1c1b216d9bbc141fba450b8b40c26a889e2bf159e5ef46c3f4e9c3e0",
+      "seconds": 4169.525987625122
+    },
+    "teacher_replay_profiles": {
+      "file": "results_teacher_profiles_600x3.json",
+      "sha256": "014007652d22f293e12f075b14d3493b13de69c60ea05620f3eb357f448b7e97",
+      "seconds": 72.24602103233337
+    },
+    "teacher_replay_scale_structure": {
+      "file": "results_teacher_scale_structure_600x3.json",
+      "sha256": "6d2f8458167224caf7b4c195b95db748e547fb487569e990f7290bc1d4c9ba18",
+      "seconds": 72.45710897445679
+    },
+    "teacher_replay_shared_embedding": {
+      "file": "results_teacher_shared_embedding_600x3.json",
+      "sha256": "04a56103e0e90816bab6a987e939fe0c648ed4d863e41d6595e836e020590862",
+      "seconds": 72.20725750923157
+    }
+  },
+  "total_recorded_seconds": 13743.082493066788
+}

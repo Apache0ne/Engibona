@@ -94,6 +94,31 @@ Full report and raw data:
 - [`experiments/official_qwen3vl_text/results_official_method_matrix.json`](experiments/official_qwen3vl_text/results_official_method_matrix.json)
 - [`experiments/official_qwen3vl_text/run_official_method_matrix.py`](experiments/official_qwen3vl_text/run_official_method_matrix.py)
 
+## Long all-method 600-step CPU benchmark
+
+The comprehensive local run now covers every runnable official-architecture recovery matrix on `main`, plus the branch-preserved scale-structure and shared-embedding families: **49 named low-bit configurations** across eight families. Every comparison used three seeds, four layers, 600 FP32 teacher steps, 600 recovery steps, batch 12, and exact g128 codes. Including the missing-baseline replays, the recorded runtime totals 3.82 core-hours-equivalent; the jobs were executed concurrently on this CPU runtime without GitHub Actions.
+
+Rank only within a family because each family has its own deterministic seeds. The main long-run winners are:
+
+| Family | Winner | Teacher KL ↓ | Fidelity proxy ↑ | Hidden cosine ↑ | Main tradeoff |
+|---|---|---:|---:|---:|---|
+| Qwen3-VL surrogate, binary | Categorical | 1.6940 | 18.38% | 0.7441 | Slight behavior win; exact-hard matches deployment during training |
+| Qwen3-VL surrogate, ternary | CAT-Q to hard | 0.9837 | 37.39% | 0.8572 | Better behavior; fewer code changes than sustained hard recovery |
+| Public-profile binary | Categorical + public pressure | 1.5956 | 20.28% | 0.7451 | Best binary behavior in that paired family |
+| Ternary schedule | CAT-Q, hard at 75% | 0.9426 | 38.96% | 0.8577 | Best behavior; 10.69% movement versus 17.35% for hard-only |
+| Binary loss | KD + hidden MSE | 1.8279 | 16.08% | 0.7279 | Small three-seed improvement over KD-only |
+| Shared embedding pair | Frozen shared sign | 2.9283 combined | n/a | 0.7223 / 0.8406 | Exact shared relation; 0.81% better combined KL than independent |
+| Qwen3.6 hybrid, binary | Categorical | 3.6803 | 2.52% | 0.3418 | Chance-level teacher limits interpretation |
+| Qwen3.6 hybrid, ternary | CAT-Q to hard | 2.9850 | 5.05% | 0.4567 | Chance-level teacher limits interpretation |
+
+This changes the **behavior ranking**, not the geometry conclusion. Categorical binary and late-hardening CAT-Q ternary are the long-run behavior specialists. Sustained exact-hard recovery still moves substantially more codes toward released-checkpoint geometry and has an exact train/deploy forward throughout. The default remains geometry-aware: binary hard is the deployment-faithful default with categorical retained as a behavior option; ternary uses a CAT-Q phase followed by a meaningful hard phase.
+
+The stronger Qwen3-VL teachers reduce the best apparent fidelity proxy from the old weak-teacher ~98% range to 18–39%. That does not mean intelligence collapsed by that amount; it proves that `exp(-teacher KL)` is not an intelligence-retention benchmark and is highly dependent on teacher/data quality.
+
+- [`docs/LONG_ALL_METHODS_600_STEP.md`](docs/LONG_ALL_METHODS_600_STEP.md)
+- [`experiments/long_all_methods/results_long_all_methods_summary.json`](experiments/long_all_methods/results_long_all_methods_summary.json)
+- [`experiments/long_all_methods/`](experiments/long_all_methods/)
+
 Clean workflow result:
 
 ```text
@@ -121,7 +146,7 @@ The apparent `97.84-98.10%` output-fidelity values are `exp(-teacher KL)` proxie
 
 ## Local official Qwen3.6 hybrid validation
 
-This two-seed, four/eight-layer matrix also ran locally in FP32 on CPU. Values below are means across both depths and all four teacher instances.
+This earlier two-seed, 40-step, four/eight-layer matrix also ran locally in FP32 on CPU. Values below are means across both depths and all four teacher instances. The newer 600-step matrix above reverses the behavior choice to binary categorical and ternary CAT-Q-to-hard; this older table remains as budget-dependent evidence.
 
 | Method | CE ↓ | Accuracy ↑ | Teacher KL ↓ | Hidden cosine ↑ |
 |---|---:|---:|---:|---:|

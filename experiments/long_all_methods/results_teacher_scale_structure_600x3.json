@@ -1,0 +1,47 @@
+{
+  "implementation": "transformers.Qwen3VLTextModel",
+  "purpose": "FP32 baseline replay for a historical matrix schema",
+  "group": "scale_structure",
+  "arguments": {
+    "group": "scale_structure",
+    "layers": 4,
+    "teacher_steps": 600,
+    "batch": 12,
+    "threads": 1,
+    "output": "experiments/long_all_methods/results_teacher_scale_structure_600x3.json"
+  },
+  "runs": [
+    {
+      "seed": 18822,
+      "ce": 4.676262855529785,
+      "accuracy": 0.1595052033662796,
+      "teacher_kl": 4.689630905829745e-10,
+      "hidden_cosine": 1.0
+    },
+    {
+      "seed": 18823,
+      "ce": 5.334359645843506,
+      "accuracy": 0.1409505158662796,
+      "teacher_kl": -6.523739881636459e-10,
+      "hidden_cosine": 1.0
+    },
+    {
+      "seed": 18824,
+      "ce": 5.732455730438232,
+      "accuracy": 0.15625,
+      "teacher_kl": 8.089475200812046e-10,
+      "hidden_cosine": 1.0
+    }
+  ],
+  "aggregate": {
+    "ce_mean": 5.247692743937175,
+    "ce_pstdev": 0.4355220707506291,
+    "accuracy_mean": 0.1522352397441864,
+    "accuracy_pstdev": 0.008089410031615797,
+    "teacher_kl_mean": 2.0851220750017774e-10,
+    "teacher_kl_pstdev": 6.243616123629574e-10,
+    "hidden_cosine_mean": 1.0,
+    "hidden_cosine_pstdev": 0.0
+  },
+  "seconds": 72.45710897445679
+}

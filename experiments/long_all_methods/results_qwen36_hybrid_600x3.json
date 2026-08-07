@@ -1,0 +1,502 @@
+{
+  "implementation": "transformers qwen3_5_text official hybrid architecture",
+  "arguments": {
+    "seeds": 3,
+    "layers": [
+      4
+    ],
+    "teacher_steps": 600,
+    "recovery_steps": 600,
+    "batch": 12,
+    "learning_rate": 0.0007,
+    "threads": 1,
+    "output": "experiments/long_all_methods/results_qwen36_hybrid_600x3.json"
+  },
+  "by_depth": {
+    "4": {
+      "runs": [
+        {
+          "seed": 36400,
+          "layers": 4,
+          "layer_types": [
+            "linear_attention",
+            "linear_attention",
+            "linear_attention",
+            "full_attention"
+          ],
+          "teacher_baseline": {
+            "ce": 9.843178749084473,
+            "accuracy": 0.0048828125,
+            "teacher_kl": 4.871337222489558e-10,
+            "hidden_cosine": 1.0
+          },
+          "methods": {
+            "binary_naive": {
+              "ce": 8.174946784973145,
+              "accuracy": 0.0029296875,
+              "teacher_kl": 4.503590106964111,
+              "hidden_cosine": 0.26083850860595703,
+              "mode": "binary",
+              "relaxation": "naive",
+              "exact_alphabet": true,
+              "code_change_fraction": 0.0,
+              "family_code_change_fraction": {
+                "embedding_head": 0.0,
+                "full_attention": 0.0,
+                "mlp": 0.0,
+                "linear_attention": 0.0
+              }
+            },
+            "binary_hard": {
+              "ce": 8.198326110839844,
+              "accuracy": 0.0068359375,
+              "teacher_kl": 3.754528045654297,
+              "hidden_cosine": 0.3182133734226227,
+              "mode": "binary",
+              "relaxation": "hard_ste",
+              "exact_alphabet": true,
+              "code_change_fraction": 0.1221553149727992,
+              "family_code_change_fraction": {
+                "embedding_head": 0.0,
+                "full_attention": 0.1301116943359375,
+                "linear_attention": 0.12496784979423868,
+                "mlp": 0.1327735053168403
+              }
+            },
+            "binary_categorical": {
+              "ce": 8.329511642456055,
+              "accuracy": 0.0022786457557231188,
+              "teacher_kl": 3.738528251647949,
+              "hidden_cosine": 0.3280494213104248,
+              "mode": "binary",
+              "relaxation": "categorical",
+              "exact_alphabet": true,
+              "code_change_fraction": 0.12180950945845698,
+              "family_code_change_fraction": {
+                "embedding_head": 0.0,
+                "full_attention": 0.12359619140625,
+                "linear_attention": 0.13067451131687244,
+                "mlp": 0.1312069363064236
+              }
+            },
+            "ternary_naive": {
+              "ce": 8.097647666931152,
+              "accuracy": 0.0026041667442768812,
+              "teacher_kl": 3.658306121826172,
+              "hidden_cosine": 0.45096397399902344,
+              "mode": "ternary",
+              "relaxation": "naive",
+              "exact_alphabet": true,
+              "code_change_fraction": 0.0,
+              "family_code_change_fraction": {
+                "embedding_head": 0.0,
+                "full_attention": 0.0,
+                "mlp": 0.0,
+                "linear_attention": 0.0
+              }
+            },
+            "ternary_hard": {
+              "ce": 8.197932243347168,
+              "accuracy": 0.00390625,
+              "teacher_kl": 3.1302292346954346,
+              "hidden_cosine": 0.42822349071502686,
+              "mode": "ternary",
+              "relaxation": "hard_ste",
+              "exact_alphabet": true,
+              "code_change_fraction": 0.20858061325420377,
+              "family_code_change_fraction": {
+                "embedding_head": 0.109832763671875,
+                "full_attention": 0.20920562744140625,
+                "linear_attention": 0.21799848894032922,
+                "mlp": 0.21544053819444445
+              }
+            },
+            "ternary_catq_hard": {
+              "ce": 8.131647109985352,
+              "accuracy": 0.0026041667442768812,
+              "teacher_kl": 3.0450267791748047,
+              "hidden_cosine": 0.44277748465538025,
+              "mode": "ternary",
+              "relaxation": "auto",
+              "exact_alphabet": true,
+              "code_change_fraction": 0.1738744899851632,
+              "family_code_change_fraction": {
+                "embedding_head": 0.11199951171875,
+                "full_attention": 0.168487548828125,
+                "linear_attention": 0.18127893518518517,
+                "mlp": 0.17882283528645834
+              }
+            }
+          }
+        },
+        {
+          "seed": 36401,
+          "layers": 4,
+          "layer_types": [
+            "linear_attention",
+            "linear_attention",
+            "linear_attention",
+            "full_attention"
+          ],
+          "teacher_baseline": {
+            "ce": 9.883268356323242,
+            "accuracy": 0.0032552082557231188,
+            "teacher_kl": -2.608376015178493e-10,
+            "hidden_cosine": 1.0
+          },
+          "methods": {
+            "binary_naive": {
+              "ce": 8.298050880432129,
+              "accuracy": 0.0035807292442768812,
+              "teacher_kl": 4.586193084716797,
+              "hidden_cosine": 0.2750684916973114,
+              "mode": "binary",
+              "relaxation": "naive",
+              "exact_alphabet": true,
+              "code_change_fraction": 0.0,
+              "family_code_change_fraction": {
+                "embedding_head": 0.0,
+                "full_attention": 0.0,
+                "mlp": 0.0,
+                "linear_attention": 0.0
+              }
+            },
+            "binary_hard": {
+              "ce": 8.405449867248535,
+              "accuracy": 0.00390625,
+              "teacher_kl": 3.659907102584839,
+              "hidden_cosine": 0.3393038809299469,
+              "mode": "binary",
+              "relaxation": "hard_ste",
+              "exact_alphabet": true,
+              "code_change_fraction": 0.1220635509396637,
+              "family_code_change_fraction": {
+                "embedding_head": 0.0,
+                "full_attention": 0.129852294921875,
+                "linear_attention": 0.12643872170781892,
+                "mlp": 0.132049560546875
+              }
+            },
+            "binary_categorical": {
+              "ce": 8.434601783752441,
+              "accuracy": 0.0032552082557231188,
+              "teacher_kl": 3.675769805908203,
+              "hidden_cosine": 0.3458237648010254,
+              "mode": "binary",
+              "relaxation": "categorical",
+              "exact_alphabet": true,
+              "code_change_fraction": 0.12040310490850643,
+              "family_code_change_fraction": {
+                "embedding_head": 0.0,
+                "full_attention": 0.1210479736328125,
+                "linear_attention": 0.1289625128600823,
+                "mlp": 0.1300269232855903
+              }
+            },
+            "ternary_naive": {
+              "ce": 8.18671989440918,
+              "accuracy": 0.0042317709885537624,
+              "teacher_kl": 3.7064476013183594,
+              "hidden_cosine": 0.46197986602783203,
+              "mode": "ternary",
+              "relaxation": "naive",
+              "exact_alphabet": true,
+              "code_change_fraction": 0.0,
+              "family_code_change_fraction": {
+                "embedding_head": 0.0,
+                "full_attention": 0.0,
+                "mlp": 0.0,
+                "linear_attention": 0.0
+              }
+            },
+            "ternary_hard": {
+              "ce": 8.257128715515137,
+              "accuracy": 0.0029296875,
+              "teacher_kl": 3.0391368865966797,
+              "hidden_cosine": 0.4451563060283661,
+              "mode": "ternary",
+              "relaxation": "hard_ste",
+              "exact_alphabet": true,
+              "code_change_fraction": 0.20679652726261127,
+              "family_code_change_fraction": {
+                "embedding_head": 0.107086181640625,
+                "full_attention": 0.20551300048828125,
+                "linear_attention": 0.21743586033950618,
+                "mlp": 0.2136722140842014
+              }
+            },
+            "ternary_catq_hard": {
+              "ce": 8.248063087463379,
+              "accuracy": 0.0035807292442768812,
+              "teacher_kl": 2.9620139598846436,
+              "hidden_cosine": 0.4605601131916046,
+              "mode": "ternary",
+              "relaxation": "auto",
+              "exact_alphabet": true,
+              "code_change_fraction": 0.17109838649851633,
+              "family_code_change_fraction": {
+                "embedding_head": 0.108245849609375,
+                "full_attention": 0.165130615234375,
+                "linear_attention": 0.1789279513888889,
+                "mlp": 0.1761050754123264
+              }
+            }
+          }
+        },
+        {
+          "seed": 36402,
+          "layers": 4,
+          "layer_types": [
+            "linear_attention",
+            "linear_attention",
+            "linear_attention",
+            "full_attention"
+          ],
+          "teacher_baseline": {
+            "ce": 9.80117416381836,
+            "accuracy": 0.0035807292442768812,
+            "teacher_kl": -2.799084020121967e-10,
+            "hidden_cosine": 1.0
+          },
+          "methods": {
+            "binary_naive": {
+              "ce": 8.305425643920898,
+              "accuracy": 0.0032552082557231188,
+              "teacher_kl": 4.62754487991333,
+              "hidden_cosine": 0.26650992035865784,
+              "mode": "binary",
+              "relaxation": "naive",
+              "exact_alphabet": true,
+              "code_change_fraction": 0.0,
+              "family_code_change_fraction": {
+                "embedding_head": 0.0,
+                "full_attention": 0.0,
+                "mlp": 0.0,
+                "linear_attention": 0.0
+              }
+            },
+            "binary_hard": {
+              "ce": 8.338204383850098,
+              "accuracy": 0.0022786457557231188,
+              "teacher_kl": 3.662822723388672,
+              "hidden_cosine": 0.33922895789146423,
+              "mode": "binary",
+              "relaxation": "hard_ste",
+              "exact_alphabet": true,
+              "code_change_fraction": 0.12202877720079129,
+              "family_code_change_fraction": {
+                "embedding_head": 0.0,
+                "full_attention": 0.12841796875,
+                "linear_attention": 0.12508439429012347,
+                "mlp": 0.13287862141927084
+              }
+            },
+            "binary_categorical": {
+              "ce": 8.400217056274414,
+              "accuracy": 0.0048828125,
+              "teacher_kl": 3.626561403274536,
+              "hidden_cosine": 0.35164323449134827,
+              "mode": "binary",
+              "relaxation": "categorical",
+              "exact_alphabet": true,
+              "code_change_fraction": 0.12035770586053413,
+              "family_code_change_fraction": {
+                "embedding_head": 0.0,
+                "full_attention": 0.12065887451171875,
+                "linear_attention": 0.1282592271090535,
+                "mlp": 0.13033040364583334
+              }
+            },
+            "ternary_naive": {
+              "ce": 8.122560501098633,
+              "accuracy": 0.0035807292442768812,
+              "teacher_kl": 3.696868896484375,
+              "hidden_cosine": 0.4542413651943207,
+              "mode": "ternary",
+              "relaxation": "naive",
+              "exact_alphabet": true,
+              "code_change_fraction": 0.0,
+              "family_code_change_fraction": {
+                "embedding_head": 0.0,
+                "full_attention": 0.0,
+                "mlp": 0.0,
+                "linear_attention": 0.0
+              }
+            },
+            "ternary_hard": {
+              "ce": 8.179095268249512,
+              "accuracy": 0.0042317709885537624,
+              "teacher_kl": 3.0192043781280518,
+              "hidden_cosine": 0.4520198106765747,
+              "mode": "ternary",
+              "relaxation": "hard_ste",
+              "exact_alphabet": true,
+              "code_change_fraction": 0.2068892572329377,
+              "family_code_change_fraction": {
+                "embedding_head": 0.107666015625,
+                "full_attention": 0.205841064453125,
+                "linear_attention": 0.21691341949588477,
+                "mlp": 0.21391805013020834
+              }
+            },
+            "ternary_catq_hard": {
+              "ce": 8.1212797164917,
+              "accuracy": 0.0035807292442768812,
+              "teacher_kl": 2.947871446609497,
+              "hidden_cosine": 0.46666374802589417,
+              "mode": "ternary",
+              "relaxation": "auto",
+              "exact_alphabet": true,
+              "code_change_fraction": 0.1718981824925816,
+              "family_code_change_fraction": {
+                "embedding_head": 0.106353759765625,
+                "full_attention": 0.16449737548828125,
+                "linear_attention": 0.1812226723251029,
+                "mlp": 0.1768917507595486
+              }
+            }
+          }
+        }
+      ],
+      "aggregate": {
+        "binary_naive": {
+          "ce_mean": 8.259474436442057,
+          "ce_pstdev": 0.05984585578114447,
+          "accuracy_mean": 0.0032552083333333335,
+          "accuracy_pstdev": 0.0002657866791216539,
+          "teacher_kl_mean": 4.572442690531413,
+          "teacher_kl_pstdev": 0.05152993589111205,
+          "hidden_cosine_mean": 0.2674723068873088,
+          "hidden_cosine_pstdev": 0.005849087995460169,
+          "code_change_fraction_mean": 0.0,
+          "code_change_fraction_pstdev": 0.0,
+          "family_code_change_fraction_mean": {
+            "embedding_head": 0.0,
+            "full_attention": 0.0,
+            "linear_attention": 0.0,
+            "mlp": 0.0
+          },
+          "all_exact_alphabet": true
+        },
+        "binary_hard": {
+          "ce_mean": 8.313993453979492,
+          "ce_pstdev": 0.08627355508733549,
+          "accuracy_mean": 0.004340277751907706,
+          "accuracy_pstdev": 0.0018856496807348386,
+          "teacher_kl_mean": 3.6924192905426025,
+          "teacher_kl_pstdev": 0.04393364927032012,
+          "hidden_cosine_mean": 0.3322487374146779,
+          "hidden_cosine_pstdev": 0.009924548189801381,
+          "code_change_fraction_mean": 0.12208254770441807,
+          "code_change_fraction_pstdev": 5.337670989942504e-05,
+          "family_code_change_fraction_mean": {
+            "embedding_head": 0.0,
+            "full_attention": 0.12946065266927084,
+            "linear_attention": 0.1254969885973937,
+            "mlp": 0.13256722909432872
+          },
+          "all_exact_alphabet": true
+        },
+        "binary_categorical": {
+          "ce_mean": 8.388110160827637,
+          "ce_pstdev": 0.043748654359824064,
+          "accuracy_mean": 0.003472222170482079,
+          "accuracy_pstdev": 0.0010741639810875152,
+          "teacher_kl_mean": 3.680286486943563,
+          "teacher_kl_pstdev": 0.045821713116164356,
+          "hidden_cosine_mean": 0.3418388068675995,
+          "hidden_cosine_pstdev": 0.010035833212459573,
+          "code_change_fraction_mean": 0.12085677340916584,
+          "code_change_fraction_pstdev": 0.0006739410226933082,
+          "family_code_change_fraction_mean": {
+            "embedding_head": 0.0,
+            "full_attention": 0.12176767985026042,
+            "linear_attention": 0.12929875042866942,
+            "mlp": 0.1305214210792824
+          },
+          "all_exact_alphabet": true
+        },
+        "ternary_naive": {
+          "ce_mean": 8.135642687479654,
+          "ce_pstdev": 0.037521754821749416,
+          "accuracy_mean": 0.0034722223257025084,
+          "accuracy_pstdev": 0.0006688817571294688,
+          "teacher_kl_mean": 3.6872075398763022,
+          "teacher_kl_pstdev": 0.02080716015470705,
+          "hidden_cosine_mean": 0.45572840174039203,
+          "hidden_cosine_pstdev": 0.004618508241456765,
+          "code_change_fraction_mean": 0.0,
+          "code_change_fraction_pstdev": 0.0,
+          "family_code_change_fraction_mean": {
+            "embedding_head": 0.0,
+            "full_attention": 0.0,
+            "linear_attention": 0.0,
+            "mlp": 0.0
+          },
+          "all_exact_alphabet": true
+        },
+        "ternary_hard": {
+          "ce_mean": 8.211385409037272,
+          "ce_pstdev": 0.03324700962345653,
+          "accuracy_mean": 0.003689236162851254,
+          "accuracy_pstdev": 0.0005532790778179374,
+          "teacher_kl_mean": 3.062856833140055,
+          "teacher_kl_pstdev": 0.0483294705948481,
+          "hidden_cosine_mean": 0.4417998691399892,
+          "hidden_cosine_pstdev": 0.010000515398962627,
+          "code_change_fraction_mean": 0.2074221325832509,
+          "code_change_fraction_pstdev": 0.0008200438242670207,
+          "family_code_change_fraction_mean": {
+            "embedding_head": 0.10819498697916667,
+            "full_attention": 0.20685323079427084,
+            "linear_attention": 0.2174492562585734,
+            "mlp": 0.2143436008029514
+          },
+          "all_exact_alphabet": true
+        },
+        "ternary_catq_hard": {
+          "ce_mean": 8.166996637980143,
+          "ce_pstdev": 0.05747867799353402,
+          "accuracy_mean": 0.0032552084109435477,
+          "accuracy_pstdev": 0.0004603559773349919,
+          "teacher_kl_mean": 2.984970728556315,
+          "teacher_kl_pstdev": 0.04285673484492537,
+          "hidden_cosine_mean": 0.45666711529095966,
+          "hidden_cosine_pstdev": 0.01013261956725927,
+          "code_change_fraction_mean": 0.17229035299208703,
+          "code_change_fraction_pstdev": 0.0011667721621793407,
+          "family_code_change_fraction_mean": {
+            "embedding_head": 0.10886637369791667,
+            "full_attention": 0.16603851318359375,
+            "linear_attention": 0.180476519633059,
+            "mlp": 0.1772732204861111
+          },
+          "all_exact_alphabet": true
+        }
+      },
+      "teacher_baseline": {
+        "ce_mean": 9.842540423075357,
+        "ce_pstdev": 0.03351785301226421,
+        "accuracy_mean": 0.00390625,
+        "accuracy_pstdev": 0.0007032053828965107,
+        "teacher_kl_mean": -1.7870760427030064e-11,
+        "teacher_kl_pstdev": 3.5717695847670415e-10,
+        "hidden_cosine_mean": 1.0,
+        "hidden_cosine_pstdev": 0.0
+      }
+    }
+  },
+  "selection": {
+    "binary_behavior_winner": "binary_categorical",
+    "ternary_behavior_winner": "ternary_catq_hard",
+    "mean_teacher_kl": {
+      "binary_naive": 4.572442690531413,
+      "binary_hard": 3.6924192905426025,
+      "binary_categorical": 3.680286486943563,
+      "ternary_naive": 3.6872075398763022,
+      "ternary_hard": 3.062856833140055,
+      "ternary_catq_hard": 2.984970728556315
+    }
+  },
+  "seconds": 4169.525987625122
+}
