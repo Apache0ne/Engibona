@@ -359,6 +359,7 @@ def run_seed(
     fp = TinyOfficialQwen36(layers=layers, tied=True)
     train_teacher(fp, training, teacher_steps, batch)
     teacher = copy.deepcopy(fp).eval()
+    teacher_baseline = evaluate(teacher, teacher, validation)
     specifications = [
         ("binary_naive", QuantMode.BINARY, "naive"),
         ("binary_hard", QuantMode.BINARY, "hard_ste"),
@@ -371,6 +372,12 @@ def run_seed(
         "seed": seed,
         "layers": layers,
         "layer_types": fp.config.layer_types,
+        "teacher_baseline": {
+            "ce": teacher_baseline["ce"],
+            "accuracy": teacher_baseline["accuracy"],
+            "teacher_kl": teacher_baseline["teacher_kl"],
+            "hidden_cosine": teacher_baseline["hidden_cosine"],
+        },
         "methods": {},
     }
     for name, mode, relaxation in specifications:
@@ -452,6 +459,15 @@ def aggregate(runs: list[dict[str, Any]]) -> dict[str, Any]:
     return output
 
 
+def aggregate_teacher_baseline(runs: list[dict[str, Any]]) -> dict[str, float]:
+    output = {}
+    for metric in ("ce", "accuracy", "teacher_kl", "hidden_cosine"):
+        values = [float(run["teacher_baseline"][metric]) for run in runs]
+        output[metric + "_mean"] = statistics.mean(values)
+        output[metric + "_pstdev"] = statistics.pstdev(values)
+    return output
+
+
 def select(by_depth: dict[str, Any]) -> dict[str, Any]:
     methods = next(iter(by_depth.values()))["aggregate"].keys()
     mean_kl = {
@@ -505,6 +521,7 @@ def main() -> None:
         by_depth[str(layers)] = {
             "runs": runs,
             "aggregate": aggregate(runs),
+            "teacher_baseline": aggregate_teacher_baseline(runs),
         }
     payload = {
         "implementation": "transformers qwen3_5_text official hybrid architecture",
@@ -517,6 +534,10 @@ def main() -> None:
         json.dumps(payload, indent=2, allow_nan=True), encoding="utf-8"
     )
     print(json.dumps({
+        "teacher_baseline": {
+            depth: values["teacher_baseline"]
+            for depth, values in by_depth.items()
+        },
         "selection": payload["selection"],
         "aggregate": {
             depth: values["aggregate"]
