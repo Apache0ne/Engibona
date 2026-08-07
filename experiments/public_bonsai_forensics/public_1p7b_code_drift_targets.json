@@ -1,0 +1,50 @@
+{
+  "source": "direct public Qwen3-1.7B versus Bonsai-1.7B-unpacked and Ternary-Bonsai-1.7B-unpacked forensics",
+  "group_size": 128,
+  "layer_code_change_fraction": {
+    "binary": [
+      0.2685830253, 0.2743007115, 0.2676849365, 0.2709372384,
+      0.2690320696, 0.2719770159, 0.2674255371, 0.2727639335,
+      0.2717721122, 0.2717808315, 0.2722930908, 0.2716827393,
+      0.2667105539, 0.2699366978, 0.2732260568, 0.2760489328,
+      0.2796914237, 0.2710854667, 0.2812391009, 0.2873535156,
+      0.2836870466, 0.2851366316, 0.2884368896, 0.2947213309,
+      0.2952466692, 0.2920445033, 0.2972368513, 0.3170122419
+    ],
+    "ternary": [
+      0.3627384731, 0.3865007673, 0.3769596645, 0.3777901786,
+      0.3728136335, 0.3722446987, 0.3672921317, 0.3731536865,
+      0.3712550572, 0.3685259138, 0.3699754987, 0.3656855992,
+      0.3618033273, 0.3671896798, 0.3661760603, 0.3698730469,
+      0.3720005580, 0.3581957136, 0.3764408657, 0.3814871652,
+      0.3766305106, 0.3785509382, 0.3850337437, 0.3916364397,
+      0.3939426967, 0.3901083810, 0.3976418631, 0.4218335833
+    ]
+  },
+  "module_code_change_fraction": {
+    "binary": {
+      "q_proj": 0.2943153381,
+      "k_proj": 0.2997174944,
+      "v_proj": 0.2386807033,
+      "o_proj": 0.2595105852,
+      "gate_proj": 0.2957692827,
+      "up_proj": 0.2997512817,
+      "down_proj": 0.2645171029
+    },
+    "ternary": {
+      "q_proj": 0.4056723458,
+      "k_proj": 0.4051540920,
+      "v_proj": 0.3315565927,
+      "o_proj": 0.3610343933,
+      "gate_proj": 0.3915034703,
+      "up_proj": 0.3977759225,
+      "down_proj": 0.3456731524
+    }
+  },
+  "notes": [
+    "Embedding is excluded because it follows a separate direct-projection policy.",
+    "Binary change means sign differs from the original Qwen sign code.",
+    "Ternary change means released code differs from the least-squares magnitude-threshold projection.",
+    "Targets describe final released geometry and do not identify the private training path."
+  ]
+}

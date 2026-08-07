@@ -1,0 +1,116 @@
+{
+  "repositories": {
+    "base": "Qwen/Qwen3-1.7B",
+    "binary": "prism-ml/Bonsai-1.7B-unpacked",
+    "ternary": "prism-ml/Ternary-Bonsai-1.7B-unpacked"
+  },
+  "layers": [0, 13, 27],
+  "feature_count_per_split": 64,
+  "sampled_neurons_per_layer": 512,
+  "seed": 98317,
+  "variants": {
+    "binary": {
+      "attention_qo_head": {
+        "unit_count": 16,
+        "identity_assignment_fraction": 1.0,
+        "assigned_minus_identity_train": 0.0,
+        "assigned_minus_identity_test": 0.0
+      },
+      "attention_kv_head": {
+        "unit_count": 8,
+        "identity_assignment_fraction": 1.0,
+        "assigned_minus_identity_train": 0.0,
+        "assigned_minus_identity_test": 0.0
+      },
+      "mlp_neuron": {
+        "identity_top1_fraction": 0.9459635416666666,
+        "identity_rank_percentile": 0.9990673661231995,
+        "identity_train_cosine": 0.41202818353970844,
+        "best_train_cosine": 0.41582589348157245,
+        "best_minus_identity_train": 0.003797742926205198,
+        "identity_test_cosine": 0.4178262948989868,
+        "matched_test_cosine": 0.4019503692785899,
+        "matched_minus_identity_test": -0.0158759206533432,
+        "matched_test_positive_gain_fraction": 0.0
+      }
+    },
+    "ternary": {
+      "attention_qo_head": {
+        "unit_count": 16,
+        "identity_assignment_fraction": 1.0,
+        "assigned_minus_identity_train": 0.0,
+        "assigned_minus_identity_test": 0.0
+      },
+      "attention_kv_head": {
+        "unit_count": 8,
+        "identity_assignment_fraction": 1.0,
+        "assigned_minus_identity_train": 0.0,
+        "assigned_minus_identity_test": 0.0
+      },
+      "mlp_neuron": {
+        "identity_top1_fraction": 0.994140625,
+        "identity_rank_percentile": 0.9999610980351766,
+        "identity_train_cosine": 0.5533750057220459,
+        "best_train_cosine": 0.5537719329198202,
+        "best_minus_identity_train": 0.0003969091922044754,
+        "identity_test_cosine": 0.5575271248817444,
+        "matched_test_cosine": 0.556044340133667,
+        "matched_minus_identity_test": -0.0014828021327654521,
+        "matched_test_positive_gain_fraction": 0.0
+      }
+    }
+  },
+  "layer_detail": {
+    "binary_mlp_identity_top1_fraction": {
+      "0": 0.98046875,
+      "13": 0.978515625,
+      "27": 0.87890625
+    },
+    "binary_mlp_matched_minus_identity_test": {
+      "0": -0.007344603538513184,
+      "13": -0.009257346391677856,
+      "27": -0.031025812029838562
+    },
+    "ternary_mlp_identity_top1_fraction": {
+      "0": 1.0,
+      "13": 1.0,
+      "27": 0.982421875
+    },
+    "ternary_mlp_matched_minus_identity_test": {
+      "0": 0.0,
+      "13": 0.0,
+      "27": -0.004448406398296356
+    }
+  },
+  "cross_variant": {
+    "mlp_best_match_agreement": {
+      "0": 0.98046875,
+      "13": 0.978515625,
+      "27": 0.87890625
+    },
+    "qo_assignment_agreement": {
+      "0": 1.0,
+      "13": 1.0,
+      "27": 1.0
+    },
+    "kv_assignment_agreement": {
+      "0": 1.0,
+      "13": 1.0,
+      "27": 1.0
+    }
+  },
+  "interpretation": [
+    "All tested Q/O and K/V attention-head assignments are exactly identity for binary and ternary checkpoints.",
+    "MLP identity neurons are the nearest training fingerprints for 94.60% of binary samples and 99.41% of ternary samples.",
+    "Alternative MLP matches selected on one feature split reduce held-out similarity by 0.01588 for binary and 0.00148 for ternary.",
+    "Neither attention-head permutation nor SwiGLU intermediate-neuron permutation explains the released checkpoint divergence.",
+    "The lower binary identity rate at layer 27 reflects stronger late-layer code drift, not a coherent permutation, because held-out matched fingerprints are worse than identity."
+  ],
+  "runtime_seconds": 111.57162499427795,
+  "workflow": {
+    "run_id": 30865369166,
+    "artifact_id": 8875928505,
+    "artifact_zip_sha256": "39df99344f20321182da05fafc672cf495af011252b0bcb0516b1f4afe8b5b22",
+    "summary_json_sha256": "7d27fbf655038f1787eb41d71eed077aecbb078460f8684359185826cb150eb4"
+  }
+}

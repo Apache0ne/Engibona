@@ -7,6 +7,10 @@ from typing import Any
 import torch
 
 from .config import EngibonaConfig, QuantMode
+from .embedding_shared import (
+    SharedEmbeddingLMHeadView,
+    SharedEmbeddingView,
+)
 from .modules import GroupQuantizedEmbedding, GroupQuantizedLinear
 from .modules_tied import TiedGroupQuantizedLMHead
 from .packing import pack_binary, pack_ternary_2bit
@@ -21,15 +25,26 @@ def export_packed(
 ) -> dict[str, Any]:
     """Export exact packed codes and FP16 scales."""
     tensors: dict[str, Any] = {}
+    shared_views = (SharedEmbeddingView, SharedEmbeddingLMHeadView)
     supported = (
         GroupQuantizedLinear,
         GroupQuantizedEmbedding,
         TiedGroupQuantizedLMHead,
+        *shared_views,
+    )
+    expected_shared_mode = (
+        "binary" if config.mode == QuantMode.BINARY else "ternary"
     )
     for name, module in model.named_modules():
         if not isinstance(module, supported):
             continue
-        if config.export_strategy == "trained" or isinstance(
+        if isinstance(module, shared_views):
+            if module.mode != expected_shared_mode:
+                # A joint research container may hold both views. Each packed
+                # artifact exports only the view matching its declared mode.
+                continue
+            codes, scales, _ = module.hard_codes_and_scales()
+        elif config.export_strategy == "trained" or isinstance(
             module, TiedGroupQuantizedLMHead
         ):
             codes, scales, _ = module.hard_codes_and_scales()

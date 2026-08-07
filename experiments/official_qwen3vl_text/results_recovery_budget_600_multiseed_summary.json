@@ -1,0 +1,97 @@
+{
+  "implementation": "transformers.Qwen3VLTextModel",
+  "execution": {
+    "location": "local CPU runtime; no GitHub Actions",
+    "cpu": "AMD EPYC 9V74",
+    "threads": 9,
+    "seconds": 862.2298953533173,
+    "full_result_sha256": "0ce57c3e76942b6af46b0c6e25b557032d1258a862e779bb6b00d839e1be42cc"
+  },
+  "arguments": {
+    "budgets": ["600:1.4e-3"],
+    "seeds": 3,
+    "seed": 16700,
+    "layers": 8,
+    "teacher_steps": 80,
+    "batch": 12
+  },
+  "teacher_baseline": {
+    "ce_mean": 4.707046349843343,
+    "ce_pstdev": 0.02958884412710994,
+    "accuracy_mean": 0.015299479166666666,
+    "accuracy_pstdev": 0.0028749217352017
+  },
+  "targets": {
+    "binary_overall_code_change": 0.2788945412214286,
+    "ternary_overall_code_change": 0.37690999556785715,
+    "teacher_kl": 0.0,
+    "hidden_cosine": 1.0,
+    "exact_alphabet_fraction": 1.0
+  },
+  "aggregate": {
+    "binary_hard_ste": {
+      "teacher_kl_mean": 0.02185221202671528,
+      "teacher_kl_pstdev": 0.002690335963798573,
+      "output_fidelity_proxy_mean": 0.9783883574434359,
+      "output_fidelity_proxy_pstdev": 0.0026308896270725657,
+      "task_likelihood_retention_mean": 1.0119443834114468,
+      "task_likelihood_retention_pstdev": 0.0037518764743677074,
+      "hidden_cosine_mean": 0.8098089893658956,
+      "hidden_cosine_pstdev": 0.011902449380260745,
+      "overall_code_change_mean": 0.20076610423900462,
+      "overall_code_change_pstdev": 0.002550753376618951,
+      "target_coverage": 0.7198638716976758,
+      "all_exact_alphabet": true
+    },
+    "binary_categorical": {
+      "teacher_kl_mean": 0.019174637893835705,
+      "teacher_kl_pstdev": 0.002059975591097623,
+      "output_fidelity_proxy_mean": 0.9810101068120877,
+      "output_fidelity_proxy_pstdev": 0.002019763667612519,
+      "task_likelihood_retention_mean": 0.9996349436537424,
+      "task_likelihood_retention_pstdev": 0.004395018400062158,
+      "hidden_cosine_mean": 0.8158632516860962,
+      "hidden_cosine_pstdev": 0.008888583736306077,
+      "overall_code_change_mean": 0.1668607923719618,
+      "overall_code_change_pstdev": 0.0032436837949942603,
+      "target_coverage": 0.5982935042083972,
+      "all_exact_alphabet": true
+    },
+    "ternary_hard_ste": {
+      "teacher_kl_mean": 0.020475919047991436,
+      "teacher_kl_pstdev": 0.0027874093218634966,
+      "output_fidelity_proxy_mean": 0.9797360957441349,
+      "output_fidelity_proxy_pstdev": 0.0027315402304614457,
+      "task_likelihood_retention_mean": 1.006145852010349,
+      "task_likelihood_retention_pstdev": 0.006466037782091747,
+      "hidden_cosine_mean": 0.8497413992881775,
+      "hidden_cosine_pstdev": 0.010879731156422642,
+      "overall_code_change_mean": 0.328134607385706,
+      "overall_code_change_pstdev": 0.005542157151343733,
+      "target_coverage": 0.8705914176973057,
+      "all_exact_alphabet": true
+    },
+    "ternary_auto": {
+      "teacher_kl_mean": 0.02129512031873067,
+      "teacher_kl_pstdev": 0.002165493302202584,
+      "output_fidelity_proxy_mean": 0.978932314917106,
+      "output_fidelity_proxy_pstdev": 0.0021196508178249833,
+      "task_likelihood_retention_mean": 1.0050735414989072,
+      "task_likelihood_retention_pstdev": 0.004914825846151548,
+      "hidden_cosine_mean": 0.8682176868120829,
+      "hidden_cosine_pstdev": 0.008393833758117836,
+      "overall_code_change_mean": 0.2856939810293692,
+      "overall_code_change_pstdev": 0.004645304347895044,
+      "target_coverage": 0.7579899296619588,
+      "all_exact_alphabet": true
+    }
+  },
+  "selection": {
+    "binary_behavior": "binary_categorical",
+    "binary_geometry": "binary_hard_ste",
+    "ternary_behavior": "ternary_hard_ste",
+    "ternary_hidden_alignment": "ternary_auto",
+    "ternary_geometry": "ternary_hard_ste"
+  },
+  "interpretation_boundary": "Output fidelity is exp(-teacher KL), not benchmark intelligence retention. The 80-step synthetic teacher is weak; compare full-precision and quantized models on converged downstream benchmarks before making PrismML-level retention claims."
+}

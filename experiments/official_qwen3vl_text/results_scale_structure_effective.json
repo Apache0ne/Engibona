@@ -1,0 +1,71 @@
+{
+  "implementation": "transformers.Qwen3VLTextModel miniature",
+  "design": {
+    "layers": [2, 4],
+    "seeds_per_depth": 3,
+    "paired_randomness": true,
+    "coefficients": [0.0, 0.1, 1.0, 10.0, 100.0, 1000.0],
+    "teacher_steps": 80,
+    "recovery_steps": 100,
+    "batch": 12,
+    "embedding_excluded_from_penalty": true
+  },
+  "binary": {
+    "free_mean_teacher_kl": 0.11015089725454648,
+    "best_coefficient": 0.1,
+    "best_mean_teacher_kl": 0.10869670969744523,
+    "best_over_free_ratio": 0.9867982232251746,
+    "paired_mean_kl_difference": -0.0014541875571012497,
+    "paired_difference_standard_deviation": 0.0022286215864107273,
+    "improved_runs": 5,
+    "total_runs": 6,
+    "exact_sign_randomization_p_two_sided": 0.1875,
+    "free_scale_additive_r2": {
+      "depth_2": 0.6918220718701681,
+      "depth_4": 0.7514589428901672
+    },
+    "coefficient_0p1_scale_additive_r2": {
+      "depth_2": 0.7826836705207825,
+      "depth_4": 0.9482857783635458
+    },
+    "coefficient_1000_mean_teacher_kl": 0.11070327088236809,
+    "coefficient_1000_scale_additive_r2": {
+      "depth_2": 0.9998297890027364,
+      "depth_4": 0.9997261762619019
+    }
+  },
+  "ternary": {
+    "free_mean_teacher_kl": 0.07315416851391396,
+    "nominal_best_coefficient": 1.0,
+    "nominal_best_mean_teacher_kl": 0.07297191551576057,
+    "nominal_best_over_free_ratio": 0.9975086450730594,
+    "paired_mean_kl_difference": -0.00018225299815336862,
+    "paired_difference_standard_deviation": 0.0020332753398168376,
+    "improved_runs": 3,
+    "total_runs": 6,
+    "exact_sign_randomization_p_two_sided": 0.90625,
+    "free_scale_additive_r2": {
+      "depth_2": 0.6603006521860758,
+      "depth_4": 0.7419802943865458
+    },
+    "coefficient_1_scale_additive_r2": {
+      "depth_2": 0.9715515375137329,
+      "depth_4": 0.9939620097478231
+    },
+    "coefficient_1000_mean_teacher_kl": 0.07369059665749471
+  },
+  "interpretation": [
+    "Free recovery spontaneously develops substantial row-plus-input-group scale structure, matching the qualitative public-checkpoint finding.",
+    "A mild binary residual penalty at coefficient 0.1 improves teacher KL in five of six paired runs and lowers the pooled mean by 1.32%, but six pairs are insufficient for a high-confidence mandatory-default claim.",
+    "Ternary coefficients show no stable behavior advantage in this sample; the nominal coefficient-1 winner improves only three of six pairs.",
+    "Very strong penalties can drive scale additive R2 above 0.999 while changing teacher KL only modestly, showing that most free per-group scale residuals are not essential on the miniature. Public checkpoints nevertheless retain measurable residual structure, so a soft prior is more faithful than a hard separability constraint.",
+    "Current implementation decision: retain free per-group scales; expose an optional mild row/group residual regularizer; run a larger paired confirmation before making it a release-matched default."
+  ],
+  "runtime_seconds": 345.9230990409851,
+  "workflow": {
+    "run_id": 30867109721,
+    "artifact_id": 8876654910,
+    "artifact_zip_sha256": "79f1b53d89aca6ee7a4cff43566d17a282d99750d8447534a9c9edf00cacc380",
+    "full_json_sha256": "87be50224c3b44e735e2a165cf2d259f8d728f7428aa6c30856493f3392da46c"
+  }
+}
