@@ -1,0 +1,30 @@
+{
+  "implementation": "transformers qwen3_5_text official hybrid architecture",
+  "execution": {
+    "location": "local CPU runtime; no GitHub Actions",
+    "threads": 9,
+    "seconds": 259.97348618507385,
+    "full_result_sha256": "5bebd3917dfcd614499b8f8180d871aaa37eed7e78e406eefb2152cec8390434"
+  },
+  "arguments": {
+    "seeds": 2,
+    "layers": [4, 8],
+    "teacher_steps": 20,
+    "recovery_steps": 40,
+    "batch": 8,
+    "learning_rate": 0.0007
+  },
+  "selection": {
+    "binary_behavior_winner": "binary_hard",
+    "ternary_behavior_winner": "ternary_hard",
+    "mean_teacher_kl": {
+      "binary_naive": 0.04553928226232529,
+      "binary_hard": 0.018386855721473694,
+      "binary_categorical": 0.018438083119690418,
+      "ternary_naive": 0.03134296042844653,
+      "ternary_hard": 0.01331793051213026,
+      "ternary_catq_hard": 0.014219651697203517
+    }
+  },
+  "boundary": "Architecture-level miniature evidence only; not full pretrained 27B intelligence retention."
+}

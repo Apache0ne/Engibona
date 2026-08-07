@@ -74,6 +74,31 @@ artifact: 8873796012
 artifact SHA-256: 07bb77f7c03bc8b9740c7f0bb35b56915bf16d11598d6a61e44d9057d460fabe
 ```
 
+## Local 600-step recovery-budget result
+
+A three-seed, eight-layer run tested 600 recovery steps at learning rate `1.4e-3` entirely on the local CPU runtime. Every method retained an exact legal low-bit alphabet. Ternary hard STE was the strongest joint behavior/geometry result: teacher KL `0.02048`, hidden cosine `0.84974`, and `32.81%` code movement versus the `37.69%` public target. Binary hard STE reached `20.08%` movement versus its `27.89%` target.
+
+The apparent `97.84-98.10%` output-fidelity values are `exp(-teacher KL)` proxies, not intelligence-retention scores. The briefly trained synthetic teacher was weak, so the next retention test requires a converged teacher or pretrained checkpoint and full-precision-normalized benchmarks.
+
+- [`docs/RECOVERY_BUDGET_600_MULTI_SEED.md`](docs/RECOVERY_BUDGET_600_MULTI_SEED.md)
+- [`experiments/official_qwen3vl_text/results_recovery_budget_600_multiseed_summary.json`](experiments/official_qwen3vl_text/results_recovery_budget_600_multiseed_summary.json)
+
+## Consolidated PR and method ranking
+
+The thirteen research PRs from #4 through #16 have been consolidated into one evidence ranking. Negative experiments remain preserved on their branches, while `main` records why they were rejected or demoted.
+
+Current selection:
+
+- binary: exact-hard STE with free learned g128 scales and public depth/module pressure;
+- ternary: optional CAT-Q soft phase followed by sustained exact-hard recovery;
+- embeddings: shared binary-codebook/scale plus ternary-mask representation is supported, but independent per-mode recovery remains the behavior default;
+- strong scale constraints, hidden gauges, head/neuron permutations, naive projection, and short recovery are rejected.
+
+See:
+
+- [`docs/PR_METHOD_RANKING.md`](docs/PR_METHOD_RANKING.md)
+- [`docs/OFFICIAL_QWEN36_LOCAL_RESULT.md`](docs/OFFICIAL_QWEN36_LOCAL_RESULT.md)
+
 ## Binary recovery mathematics
 
 For each group:

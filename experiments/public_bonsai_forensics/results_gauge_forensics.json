@@ -1,0 +1,75 @@
+{
+  "repositories": {
+    "base": "Qwen/Qwen3-1.7B",
+    "binary": "prism-ml/Bonsai-1.7B-unpacked",
+    "ternary": "prism-ml/Ternary-Bonsai-1.7B-unpacked"
+  },
+  "tensor_count": 197,
+  "sampled_groups": 460784,
+  "sampled_weights": 58980352,
+  "group_size": 128,
+  "rows_per_tensor_limit": 128,
+  "group_columns_per_tensor_limit": 32,
+  "metrics": {
+    "binary_raw_sign_agreement": 0.7235669939711449,
+    "binary_row_only_agreement": 0.7235686894510226,
+    "binary_column_only_agreement": 0.7235730637891072,
+    "binary_row_column_agreement": 0.7235748609977777,
+    "binary_row_column_gain": 0.000007867026632869197,
+    "binary_row_flip_fraction": 0.00010417028369040591,
+    "binary_column_flip_fraction": 0.00011502135490815653,
+    "binary_row_block_agreement": 0.7235686894510226,
+    "binary_row_block_gain": 0.0000016954798777735338,
+    "ternary_nonzero_raw_sign_agreement": 0.8714411682951232,
+    "ternary_nonzero_row_column_agreement": 0.8714419413013743,
+    "ternary_nonzero_row_column_gain": 0.0000007730062510659868,
+    "binary_ternary_raw_sign_agreement": 0.9028754577168121,
+    "binary_ternary_row_column_agreement": 0.902875487231184,
+    "binary_ternary_row_column_gain": 0.000000029514371845905286,
+    "binary_scale_row_r2": 0.683969127141112,
+    "binary_scale_group_column_r2": 0.062225100436199686,
+    "binary_scale_additive_r2": 0.7461942275773116,
+    "binary_scale_additive_cv_r2": 0.7078448656594145,
+    "ternary_scale_row_r2": 0.5862105488131298,
+    "ternary_scale_group_column_r2": 0.05523434987252559,
+    "ternary_scale_additive_r2": 0.6414448986856555,
+    "ternary_scale_additive_cv_r2": 0.595171488906843
+  },
+  "module_scale_cv_r2": {
+    "binary": {
+      "embed_tokens": -0.104881,
+      "q_proj": 0.854566,
+      "k_proj": 0.838486,
+      "v_proj": 0.653532,
+      "o_proj": 0.644297,
+      "gate_proj": 0.843153,
+      "up_proj": 0.748599,
+      "down_proj": 0.554462
+    },
+    "ternary": {
+      "embed_tokens": 0.064592,
+      "q_proj": 0.751234,
+      "k_proj": 0.751265,
+      "v_proj": 0.478042,
+      "o_proj": 0.596615,
+      "gate_proj": 0.750008,
+      "up_proj": 0.678919,
+      "down_proj": 0.387046
+    }
+  },
+  "interpretation": [
+    "The optimal row-plus-column sign gauge improves binary sign agreement by only 0.000787 percentage points.",
+    "The corresponding ternary nonzero-sign gain is 0.000077 percentage points and the binary-versus-ternary gain is 0.000003 percentage points.",
+    "Simple hidden-channel sign flips do not explain the released code reassignment; codes changed within the original coordinate system.",
+    "Scale-ratio changes contain substantial low-rank structure: row plus input-group effects explain 70.78% of held-out binary variance and 59.52% of ternary variance overall.",
+    "Most binary Q/K/gate scale-ratio structure is output-row dominated, while O projection has a much stronger input-group-column component.",
+    "Separable scaling is an important recovery prior but is not a complete scale model, and it does not explain code changes."
+  ],
+  "runtime_seconds": 170.6075201034546,
+  "workflow": {
+    "run_id": 30865843604,
+    "artifact_id": 8876115080,
+    "artifact_zip_sha256": "9f084306f229b83e52631cc09b4fc8acf759c259512681543f4c14a8b22e1133",
+    "summary_json_sha256": "f998f75a498f4125accfa50de5c082e0e1758b8199fcd76d64b4d42770960893"
+  }
+}

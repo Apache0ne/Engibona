@@ -1,0 +1,123 @@
+{
+  "implementation": "transformers.Qwen3VLTextModel miniature",
+  "design": {
+    "layers": [4, 8],
+    "seeds_per_depth": 3,
+    "recovery_steps": 120,
+    "teacher_steps": 80,
+    "paired_minibatches_within_mode": true,
+    "public_target": "direct Qwen3-1.7B versus released Bonsai code-change fractions"
+  },
+  "aggregate": {
+    "binary_hard_ste_uniform": {
+      "teacher_kl": 0.04241117338339488,
+      "layer_profile_rmse": 0.20653637516167056,
+      "module_profile_rmse": 0.20620405069327055
+    },
+    "binary_hard_ste_public": {
+      "teacher_kl": 0.04129067280640205,
+      "layer_profile_rmse": 0.2038093658700739,
+      "module_profile_rmse": 0.20368694814560512
+    },
+    "binary_categorical_uniform": {
+      "teacher_kl": 0.041074286215007305,
+      "layer_profile_rmse": 0.2102687482286224,
+      "module_profile_rmse": 0.21048415362696488
+    },
+    "binary_categorical_public": {
+      "teacher_kl": 0.040293555396298565,
+      "layer_profile_rmse": 0.20858056148062468,
+      "module_profile_rmse": 0.20903600535251238
+    },
+    "ternary_hard_ste_uniform": {
+      "teacher_kl": 0.025709308062990505,
+      "layer_profile_rmse": 0.2593296481073976,
+      "module_profile_rmse": 0.260577625495757
+    },
+    "ternary_hard_ste_public": {
+      "teacher_kl": 0.026302347580591835,
+      "layer_profile_rmse": 0.2575675471196702,
+      "module_profile_rmse": 0.25847139372765826
+    },
+    "ternary_auto_uniform": {
+      "teacher_kl": 0.021759061918904383,
+      "layer_profile_rmse": 0.27935121117192485,
+      "module_profile_rmse": 0.2812740002997275
+    },
+    "ternary_auto_public": {
+      "teacher_kl": 0.02266958417991797,
+      "layer_profile_rmse": 0.2766908623733528,
+      "module_profile_rmse": 0.2780368267069985
+    }
+  },
+  "paired_public_profile_effects": {
+    "binary_hard_ste": {
+      "teacher_kl_mean_difference": -0.0011205005769928296,
+      "layer_profile_rmse_mean_difference": -0.0027270092915966707,
+      "module_profile_rmse_mean_difference": -0.0025171025476654527,
+      "layer_profile_correlation_mean_gain": 0.04644466175828812,
+      "overall_code_change_mean_gain": 0.002574920654296875
+    },
+    "binary_categorical": {
+      "teacher_kl_mean_difference": -0.0007807308187087377,
+      "layer_profile_rmse_mean_difference": -0.0016881867479977136,
+      "module_profile_rmse_mean_difference": -0.0014481482744525126,
+      "layer_profile_correlation_mean_gain": 0.0409504670194342,
+      "overall_code_change_mean_gain": 0.0015705249927662039
+    },
+    "ternary_hard_ste": {
+      "teacher_kl_mean_difference": 0.0005930395176013311,
+      "layer_profile_rmse_mean_difference": -0.0017621009877273792,
+      "module_profile_rmse_mean_difference": -0.002106231768098691,
+      "layer_profile_correlation_mean_gain": 0.09120865887831218,
+      "overall_code_change_mean_gain": 0.001592424180772568
+    },
+    "ternary_auto": {
+      "teacher_kl_mean_difference": 0.0009105222610135874,
+      "layer_profile_rmse_mean_difference": -0.0026603487985720486,
+      "module_profile_rmse_mean_difference": -0.0032371735927290515,
+      "layer_profile_correlation_mean_gain": 0.07291178306002292,
+      "overall_code_change_mean_gain": 0.0025503370496961775
+    }
+  },
+  "depth_8": {
+    "binary_hard_ste_public": {
+      "teacher_kl": 0.030516895775993664,
+      "overall_code_change_fraction": 0.07883340341073496,
+      "layer_profile_correlation": 0.9318195883675942,
+      "layer_profile": [0.0661, 0.0630, 0.0682, 0.0736, 0.0797, 0.0857, 0.0919, 0.1027],
+      "mapped_public_target": [0.2686, 0.2690, 0.2718, 0.2667, 0.2760, 0.2874, 0.2947, 0.3170]
+    },
+    "binary_categorical_public": {
+      "teacher_kl": 0.03057019350429376,
+      "overall_code_change_fraction": 0.07485594572844328,
+      "layer_profile_correlation": 0.9323822652994325
+    },
+    "ternary_hard_ste_public": {
+      "teacher_kl": 0.017132716874281567,
+      "overall_code_change_fraction": 0.12196915237991898,
+      "layer_profile_correlation": 0.8752456922960646,
+      "layer_profile": [0.1015, 0.1006, 0.1082, 0.1151, 0.1250, 0.1294, 0.1392, 0.1568],
+      "mapped_public_target": [0.3627, 0.3728, 0.3713, 0.3618, 0.3699, 0.3815, 0.3916, 0.4218]
+    },
+    "ternary_auto_public": {
+      "teacher_kl": 0.01564330793917179,
+      "overall_code_change_fraction": 0.10584993715639467,
+      "layer_profile_correlation": 0.8641156986443066
+    }
+  },
+  "interpretation": [
+    "The public layer/module learning-rate prior consistently moves code-change geometry closer to released Bonsai geometry and substantially improves depth-profile correlation.",
+    "For binary recovery, the public prior also improves teacher KL on average for both exact-hard and categorical surrogates. Binary categorical-public has the lowest aggregate KL, while binary hard-public is the closest tested code geometry.",
+    "For ternary recovery, the public prior improves geometry but modestly worsens aggregate KL; CAT-Q/auto remains the behavior winner and hard recovery remains closer to released code-change magnitude.",
+    "All miniature runs under-shoot released code-change magnitude severely: about 7-8% versus 27-30% binary and 10-12% versus 36-42% ternary. The shape of the drift is already correct, especially by depth, but the recovery budget is too small to match final released geometry.",
+    "The next method-selection experiment must vary recovery duration and learning-rate budget rather than further tuning only surrogate type."
+  ],
+  "runtime_seconds": 571.653327703476,
+  "workflow": {
+    "run_id": 30866516677,
+    "artifact_id": 8876506254,
+    "artifact_zip_sha256": "f0b41b2ebf36d804eed1128d2878d5c658fd9185542f3219dda47aec1247b793",
+    "full_json_sha256": "53f6b27979ba0a1fcb20d7f6bc09f44b273af3b6535a0c1db1eb3de5e12c2b57"
+  }
+}

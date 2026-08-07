@@ -1,0 +1,92 @@
+{
+  "repositories": {
+    "base": "Qwen/Qwen3-1.7B",
+    "binary": "prism-ml/Bonsai-1.7B-unpacked",
+    "ternary": "prism-ml/Ternary-Bonsai-1.7B-unpacked"
+  },
+  "coverage": {
+    "prompts": 8,
+    "prompt_lengths": [48, 53, 44, 44, 44, 65, 38, 44],
+    "pooled_hidden_tokens": 380,
+    "sampled_logit_positions": 64,
+    "selected_hidden_states": [0, 7, 14, 21, 28],
+    "projection_dimension": 128
+  },
+  "logits": {
+    "naive_binary": {
+      "teacher_kl": 11.0958766937,
+      "top1_agreement": 0.0,
+      "centered_logit_cosine": 0.1367339343,
+      "affine_logit_r2": 0.2174316049,
+      "top10_overlap": 0.0125000002,
+      "top100_overlap": 0.0224999990
+    },
+    "released_binary": {
+      "teacher_kl": 0.5549958944,
+      "top1_agreement": 0.65625,
+      "centered_logit_cosine": 0.6232856512,
+      "affine_logit_r2": 0.5124979019,
+      "top10_overlap": 0.6187500358,
+      "top100_overlap": 0.6060937643
+    },
+    "naive_ternary": {
+      "teacher_kl": 11.2819023132,
+      "top1_agreement": 0.0,
+      "centered_logit_cosine": 0.1390935034,
+      "affine_logit_r2": 0.2175823450,
+      "top10_overlap": 0.03125,
+      "top100_overlap": 0.0524999984
+    },
+    "released_ternary": {
+      "teacher_kl": 0.4563890100,
+      "top1_agreement": 0.65625,
+      "centered_logit_cosine": 0.7145903111,
+      "affine_logit_r2": 0.6124585867,
+      "top10_overlap": 0.6578124762,
+      "top100_overlap": 0.6648437381
+    }
+  },
+  "hidden": {
+    "released_binary": {
+      "raw_cosine": [0.8313812017, 0.6910052896, 0.7098564506, 0.7337149382, 0.5290954113],
+      "centered_cosine": [0.8293217421, 0.6110512018, 0.5648741722, 0.5961473584, 0.5700749755],
+      "pooled_linear_cka": [0.9520890117, 0.9526872039, 0.7777265906, 0.1705874205, 0.7912002802],
+      "diagonal_affine_r2": [0.6974015832, 0.0126347542, 0.0190834403, 0.0926783681, 0.7889530063],
+      "signed_standardized_r2": [0.6694426537, 0.0206197500, 0.0456848741, 0.1108946800, 0.6827795506],
+      "negative_channel_fraction": [0.0, 0.0, 0.0, 0.0, 0.0009765625],
+      "median_abs_channel_correlation": [0.8329693675, 0.4809775949, 0.4967637658, 0.5700182915, 0.5128903985]
+    },
+    "released_ternary": {
+      "raw_cosine": [0.9085284472, 0.7524772882, 0.7599291205, 0.7873955965, 0.5984520316],
+      "centered_cosine": [0.9071702361, 0.7039150596, 0.6660874486, 0.6948323250, 0.6661663651],
+      "pooled_linear_cka": [0.9766786695, 0.9645290375, 0.8347181678, 0.2200548500, 0.8145314455],
+      "diagonal_affine_r2": [0.8272196054, 0.0191658735, 0.0360079408, 0.1072492599, 0.8241487741],
+      "signed_standardized_r2": [0.8189858198, 0.0265921950, 0.0610931516, 0.1265475154, 0.7509329915],
+      "negative_channel_fraction": [0.0, 0.0, 0.0, 0.0, 0.00048828125],
+      "median_abs_channel_correlation": [0.9080224037, 0.5986883640, 0.6098605990, 0.6741666794, 0.6133669019]
+    },
+    "naive_binary": {
+      "raw_cosine": [0.8314150572, 0.0100285821, 0.0942451283, 0.1477112025, 0.0696598738],
+      "negative_channel_fraction": [0.0, 0.5126953125, 0.5219726562, 0.4907226562, 0.51953125]
+    },
+    "naive_ternary": {
+      "raw_cosine": [0.9178732038, 0.3142024577, 0.4397272468, 0.3652191162, 0.2074907273],
+      "negative_channel_fraction": [0.0, 0.2163085938, 0.4086914062, 0.4370117188, 0.4721679688]
+    }
+  },
+  "interpretation": [
+    "Released binary and ternary KL are respectively 5.00% and 4.05% of their naive g128 baselines on the longer prompt set.",
+    "Released states remain strongly aligned in the original coordinates through depth; naive states lose coordinate alignment after the embedding state.",
+    "Across released intermediate states, essentially no channel has negative teacher correlation, independently rejecting a hidden-channel sign gauge.",
+    "A fixed per-channel affine map explains only 1-11% of held-out intermediate-state variance, so the recovery is not merely static channel rescaling.",
+    "After the final hidden normalization, diagonal affine alignment rises to 78.90% for binary and 82.41% for ternary, indicating strong final-channel calibration before the tied LM head.",
+    "Ternary retains higher centered logit similarity, top-k overlap, hidden cosine, and final affine alignment than binary."
+  ],
+  "runtime_seconds": 468.1723258495,
+  "workflow": {
+    "run_id": 30865992711,
+    "artifact_id": 8876266638,
+    "artifact_zip_sha256": "042f8b79999c0549c1240f3df297e770132dd179e0727bf6395560d6a404d18e",
+    "full_json_sha256": "a3251466961a1168b3b87dd901727c9ed7173de6f68bbf42b1acdd4e762d22cf"
+  }
+}

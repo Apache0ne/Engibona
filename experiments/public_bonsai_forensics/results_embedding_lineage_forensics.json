@@ -1,0 +1,91 @@
+{
+  "coverage": {
+    "method": "remote safetensors byte-range deterministic row blocks",
+    "1.7B_sampled_rows": 4992,
+    "1.7B_sampled_weights": 10223616,
+    "4B_sampled_rows": 5120,
+    "4B_sampled_weights": 13107200,
+    "common_vocabulary_rows": 151669,
+    "group_size": 128
+  },
+  "results": {
+    "1.7B": {
+      "binary_sign_agreement_base": 0.9993970990180969,
+      "binary_sign_flip_rate": 0.0006029178039170802,
+      "binary_scale_corr_naive": 0.9999876618385315,
+      "binary_scale_median_ratio_naive": 0.9999480843544006,
+      "ternary_zero_rate": 0.3118962049484253,
+      "ternary_code_agreement_naive": 0.848816990852356,
+      "ternary_nonzero_sign_agreement_base": 1.0,
+      "ternary_scale_corr_naive": 0.9740661382675171,
+      "binary_ternary_nonzero_sign_agreement": 1.0,
+      "binary_flip_given_ternary_zero": 0.0019330718787387013,
+      "binary_flip_given_ternary_nonzero": 0.0,
+      "ternary_zero_given_binary_flip": 1.0,
+      "binary_ternary_scale_corr": 0.9999998211860657,
+      "binary_ternary_scale_exact_fraction": 0.9968199133872986,
+      "binary_ternary_scale_mean_relative_error": 0.000018585666111903265,
+      "binary_ternary_scale_max_relative_error": 0.021008403971791267,
+      "binary_equals_ternary_exact_on_nonzero": 0.9968335032463074,
+      "binary_codebook_plus_mask_exact_fraction": 0.9978211522102356,
+      "binary_codebook_plus_mask_mean_abs_error": 2.3699772100371774e-7,
+      "binary_codebook_plus_mask_max_abs_error": 0.000244140625,
+      "row_binary_sign_agreement_quantiles": {
+        "min": 0.9853515625,
+        "p01": 0.99658203125,
+        "p50": 1.0,
+        "p99": 1.0,
+        "max": 1.0
+      },
+      "row_index_binary_agreement_correlation": 0.3388737142086029,
+      "row_index_ternary_zero_rate_correlation": 0.42132052779197693
+    },
+    "4B": {
+      "binary_sign_agreement_base": 0.9319714307785034,
+      "binary_sign_flip_rate": 0.06802856177091599,
+      "binary_scale_corr_naive": 0.9962449669837952,
+      "binary_scale_median_ratio_naive": 0.9896904230117798,
+      "ternary_zero_rate": 0.31196922063827515,
+      "ternary_code_agreement_naive": 0.8230672478675842,
+      "ternary_nonzero_sign_agreement_base": 0.9944392442703247,
+      "ternary_scale_corr_naive": 0.9682891368865967,
+      "binary_ternary_nonzero_sign_agreement": 1.0,
+      "binary_flip_given_ternary_zero": 0.20579779148101807,
+      "binary_flip_given_ternary_nonzero": 0.005560781341046095,
+      "ternary_zero_given_binary_flip": 0.9437590837478638,
+      "binary_ternary_scale_corr": 0.9999986886978149,
+      "binary_ternary_scale_exact_fraction": 0.9944043159484863,
+      "binary_ternary_scale_mean_relative_error": 0.00004267536132829264,
+      "binary_ternary_scale_max_relative_error": 0.03947368264198303,
+      "binary_equals_ternary_exact_on_nonzero": 0.9944126009941101,
+      "binary_codebook_plus_mask_exact_fraction": 0.9961556792259216,
+      "binary_codebook_plus_mask_mean_abs_error": 4.015199408513581e-7,
+      "binary_codebook_plus_mask_max_abs_error": 0.00018310546875,
+      "row_binary_sign_agreement_quantiles": {
+        "min": 0.598828136920929,
+        "p01": 0.879687488079071,
+        "p50": 0.9359375238418579,
+        "p99": 0.965624988079071,
+        "max": 0.975781261920929
+      },
+      "row_index_binary_agreement_correlation": -0.05329278111457825,
+      "row_index_ternary_zero_rate_correlation": 0.46641749143600464
+    }
+  },
+  "interpretation": [
+    "At both scales, binary and ternary embedding signs agree on every sampled ternary-nonzero position.",
+    "Binary and ternary embedding scales are effectively shared: correlation exceeds 0.999998, more than 99.44% of sampled groups are bit-exact after inference, and mean relative scale error is below 4.3e-5.",
+    "Multiplying the released binary embedding by the released ternary nonzero mask reconstructs the released ternary embedding with mean absolute error below 4.1e-7 and maximum error below 2.5e-4, consistent with FP16-scale rounding rather than independent codebooks.",
+    "At 1.7B every sampled binary sign flip occurs at a ternary-zero position; at 4B 94.38% do. The ternary mask identifies nearly all uncertain binary embedding coordinates.",
+    "The common representation is a shared embedding sign codebook and group scale plus a ternary zero mask. What changes with scale is whether the shared binary sign codebook remains frozen to Qwen: 99.94% agreement at 1.7B versus 93.20% at 4B in the expanded row sample.",
+    "Released checkpoints do not identify whether binary signs were recovered first and then masked, ternary zeros were filled to form binary, or both were optimized jointly."
+  ],
+  "runtime_seconds": 91.70360374450684,
+  "workflow": {
+    "run_id": 30867090328,
+    "artifact_id": 8876542034,
+    "artifact_zip_sha256": "b24480eae019702184562692bbd579219184b35c0a9309210ceda70b36cbdd61",
+    "summary_json_sha256": "30cfe43e1233e3b5e25a2420b0fb573af6ad0c671c002605dae0b4b5934513a9",
+    "row_bin_csv_sha256": "85d8088e338bfe76073f839243b78afbbf25703901e99d2bf6b687578d1350b0"
+  }
+}
