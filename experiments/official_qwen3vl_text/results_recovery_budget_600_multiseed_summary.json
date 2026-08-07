@@ -30,6 +30,10 @@
   },
   "aggregate": {
     "binary_hard_ste": {
+      "ce_mean": 4.695179621378581,
+      "ce_pstdev": 0.026493982942793502,
+      "accuracy_mean": 0.0145399309694767,
+      "accuracy_pstdev": 0.0024116875109630844,
       "teacher_kl_mean": 0.02185221202671528,
       "teacher_kl_pstdev": 0.002690335963798573,
       "output_fidelity_proxy_mean": 0.9783883574434359,
@@ -44,6 +48,10 @@
       "all_exact_alphabet": true
     },
     "binary_categorical": {
+      "ce_mean": 4.7074211438496905,
+      "ce_pstdev": 0.0251941532098353,
+      "accuracy_mean": 0.013780381840964159,
+      "accuracy_pstdev": 0.0033863903898217113,
       "teacher_kl_mean": 0.019174637893835705,
       "teacher_kl_pstdev": 0.002059975591097623,
       "output_fidelity_proxy_mean": 0.9810101068120877,
@@ -58,6 +66,10 @@
       "all_exact_alphabet": true
     },
     "ternary_hard_ste": {
+      "ce_mean": 4.700939973195394,
+      "ce_pstdev": 0.023168678185183145,
+      "accuracy_mean": 0.014105902674297491,
+      "accuracy_pstdev": 0.0022290185708320146,
       "teacher_kl_mean": 0.020475919047991436,
       "teacher_kl_pstdev": 0.0027874093218634966,
       "output_fidelity_proxy_mean": 0.9797360957441349,
@@ -72,6 +84,10 @@
       "all_exact_alphabet": true
     },
     "ternary_auto": {
+      "ce_mean": 4.701997598012288,
+      "ce_pstdev": 0.02654142037774257,
+      "accuracy_mean": 0.015299479477107525,
+      "accuracy_pstdev": 0.0019166149470910443,
       "teacher_kl_mean": 0.02129512031873067,
       "teacher_kl_pstdev": 0.002165493302202584,
       "output_fidelity_proxy_mean": 0.978932314917106,

@@ -21,6 +21,32 @@ It is **not PrismML's proprietary converter** and does not claim bit-for-bit ide
 
 Binary defaults to exact-hard forward recovery. Ternary defaults to a CAT-Q-style soft phase followed by sustained exact-hard recovery because the current official-architecture evidence favors different paths at different depths.
 
+## Full-precision references and metric directions
+
+All miniature benchmarks below used an **FP32 teacher**: model parameters, activations, teacher training, and evaluation were FP32 on CPU. The low-bit students use exact binary or ternary codes with learned group scales. These tables do not contain a BF16 teacher run; labeling the reference as BF16 would be incorrect.
+
+| Mark | Meaning | Best value |
+|---|---|---:|
+| `CE ↓` | Cross-entropy against task labels | Lower |
+| `Accuracy ↑` | Exact next-token accuracy | Higher |
+| `Teacher KL ↓` | Difference from the FP32 teacher output distribution | `0` |
+| `Hidden cosine ↑` | Directional agreement with FP32 teacher hidden states | `1.0` / `100%` |
+| `Output fidelity ↑` | `exp(-Teacher KL)`, a local distribution-fidelity proxy | `100%` |
+| `Code movement ↔ target` | Fraction of low-bit codes changed during recovery | Closest to the stated public target, not simply higher |
+| `Target coverage ↔` | Code movement divided by the public target | Closest to `100%`; overshooting is also an error |
+
+The exact FP32 denominators are:
+
+| Benchmark | Seeds | FP32 CE ↓ | FP32 accuracy ↑ | Teacher KL ↓ | Hidden cosine ↑ |
+|---|---:|---:|---:|---:|---:|
+| Qwen3-VL miniature, 2 layers | 3 | 4.60368 +/- 0.03077 | 3.3529% +/- 0.3134% | ~0 | 1.0000 |
+| Qwen3-VL miniature, 4 layers | 3 | 4.36467 +/- 0.14874 | 2.1918% +/- 0.3459% | ~0 | 1.0000 |
+| Qwen3-VL miniature, 8 layers, 600-step matrix | 3 | 4.70705 +/- 0.02959 | 1.5299% +/- 0.2875% | 0 | 1.0000 |
+| Qwen3.6 hybrid miniature, 4 layers | 2 | 5.59156 +/- 0.00719 | 0.3906% +/- 0.1628% | ~0 | 1.0000 |
+| Qwen3.6 hybrid miniature, 8 layers | 2 | 5.59657 +/- 0.00601 | 0.4720% +/- 0.0488% | ~0 | 1.0000 |
+
+These are synthetic architecture tests, not full pretrained-Qwen intelligence benchmarks. Bold values in later tables identify the best **low-bit student**, excluding the FP32 reference row.
+
 ## Clean official Qwen3-VL validation
 
 A GitHub-hosted clean runner executed the test suite and a multi-seed method matrix using Hugging Face's public `Qwen3VLTextModel` implementation.
@@ -38,25 +64,27 @@ The reduced official configuration retained:
 
 ### Two decoder layers, three seeds
 
-| Method | CE | Accuracy | Teacher KL | Hidden cosine |
+| Method | CE ↓ | Accuracy ↑ | Teacher KL ↓ | Hidden cosine ↑ |
 |---|---:|---:|---:|---:|
-| Binary naive | 4.76875 | 0.01367 | 0.31115 | 0.59272 |
-| Binary hard recovery | **4.49671** | **0.02843** | **0.17731** | 0.68224 |
-| Binary categorical recovery | 4.51536 | 0.02778 | 0.17838 | **0.68349** |
-| Ternary naive | 4.69071 | 0.01866 | 0.21809 | 0.74351 |
-| Ternary hard recovery | 4.51400 | 0.03158 | **0.13002** | 0.78396 |
-| Ternary CAT-Q recovery | **4.50444** | **0.03190** | 0.13188 | **0.78771** |
+| FP32 teacher reference | 4.60368 | 3.3529% | ~0 | 1.00000 |
+| Binary naive | 4.76875 | 1.367% | 0.31115 | 0.59272 |
+| Binary hard recovery | **4.49671** | **2.843%** | **0.17731** | 0.68224 |
+| Binary categorical recovery | 4.51536 | 2.778% | 0.17838 | **0.68349** |
+| Ternary naive | 4.69071 | 1.866% | 0.21809 | 0.74351 |
+| Ternary hard recovery | 4.51400 | 3.158% | **0.13002** | 0.78396 |
+| Ternary CAT-Q recovery | **4.50444** | **3.190%** | 0.13188 | **0.78771** |
 
 ### Four decoder layers, three seeds
 
-| Method | CE | Accuracy | Teacher KL | Hidden cosine |
+| Method | CE ↓ | Accuracy ↑ | Teacher KL ↓ | Hidden cosine ↑ |
 |---|---:|---:|---:|---:|
-| Binary naive | 4.47710 | 0.02040 | 0.12017 | 0.84206 |
-| Binary hard recovery | 4.26599 | 0.02387 | **0.05441** | 0.84827 |
-| Binary categorical recovery | **4.26291** | **0.02658** | 0.05466 | **0.85057** |
-| Ternary naive | 4.46434 | 0.02148 | 0.10019 | **0.90964** |
-| Ternary hard recovery | 4.26274 | **0.02637** | 0.04448 | 0.87994 |
-| Ternary CAT-Q recovery | 4.28870 | 0.02561 | **0.04133** | **0.89408** |
+| FP32 teacher reference | 4.36467 | 2.1918% | ~0 | 1.00000 |
+| Binary naive | 4.47710 | 2.040% | 0.12017 | 0.84206 |
+| Binary hard recovery | 4.26599 | 2.387% | **0.05441** | 0.84827 |
+| Binary categorical recovery | **4.26291** | **2.658%** | 0.05466 | **0.85057** |
+| Ternary naive | 4.46434 | 2.148% | 0.10019 | **0.90964** |
+| Ternary hard recovery | **4.26274** | **2.637%** | 0.04448 | 0.87994 |
+| Ternary CAT-Q recovery | 4.28870 | 2.561% | **0.04133** | **0.89408** |
 
 Every recovery method beat its naive projection baseline on teacher KL for every tested seed. All final code tensors passed exact-alphabet checks.
 
@@ -78,10 +106,37 @@ artifact SHA-256: 07bb77f7c03bc8b9740c7f0bb35b56915bf16d11598d6a61e44d9057d460fa
 
 A three-seed, eight-layer run tested 600 recovery steps at learning rate `1.4e-3` entirely on the local CPU runtime. Every method retained an exact legal low-bit alphabet. Ternary hard STE was the strongest joint behavior/geometry result: teacher KL `0.02048`, hidden cosine `0.84974`, and `32.81%` code movement versus the `37.69%` public target. Binary hard STE reached `20.08%` movement versus its `27.89%` target.
 
+| Method | CE ↓ | Accuracy ↑ | Teacher KL ↓ | Output fidelity ↑ | Hidden cosine ↑ | Code movement ↔ target |
+|---|---:|---:|---:|---:|---:|---:|
+| FP32 teacher reference | 4.70705 +/- 0.02959 | 1.5299% +/- 0.2875% | 0 | 100% | 100% | n/a |
+| Binary hard STE | **4.69518 +/- 0.02649** | **1.4540% +/- 0.2412%** | 0.02185 +/- 0.00269 | 97.84% | 80.98% | **20.08% / 27.89%** |
+| Binary categorical | 4.70742 +/- 0.02519 | 1.3780% +/- 0.3386% | **0.01917 +/- 0.00206** | **98.10%** | **81.59%** | 16.69% / 27.89% |
+| Ternary hard STE | **4.70094 +/- 0.02317** | 1.4106% +/- 0.2229% | **0.02048 +/- 0.00279** | **97.97%** | 84.97% | **32.81% / 37.69%** |
+| Ternary auto | 4.70200 +/- 0.02654 | **1.5299% +/- 0.1917%** | 0.02130 +/- 0.00217 | 97.89% | **86.82%** | 28.57% / 37.69% |
+
 The apparent `97.84-98.10%` output-fidelity values are `exp(-teacher KL)` proxies, not intelligence-retention scores. The briefly trained synthetic teacher was weak, so the next retention test requires a converged teacher or pretrained checkpoint and full-precision-normalized benchmarks.
 
 - [`docs/RECOVERY_BUDGET_600_MULTI_SEED.md`](docs/RECOVERY_BUDGET_600_MULTI_SEED.md)
 - [`experiments/official_qwen3vl_text/results_recovery_budget_600_multiseed_summary.json`](experiments/official_qwen3vl_text/results_recovery_budget_600_multiseed_summary.json)
+
+## Local official Qwen3.6 hybrid validation
+
+This two-seed, four/eight-layer matrix also ran locally in FP32 on CPU. Values below are means across both depths and all four teacher instances.
+
+| Method | CE ↓ | Accuracy ↑ | Teacher KL ↓ | Hidden cosine ↑ |
+|---|---:|---:|---:|---:|
+| FP32 teacher reference | 5.59407 +/- 0.00708 | 0.4313% +/- 0.1269% | ~0 | 1.00000 |
+| Binary naive | 5.57544 | 0.3418% | 0.04554 | 0.53775 |
+| Binary hard | **5.57448** | **0.3581%** | **0.01839** | **0.79585** |
+| Binary categorical | 5.57453 | **0.3581%** | 0.01844 | 0.79043 |
+| Ternary naive | **5.56524** | 0.3499% | 0.03134 | 0.69957 |
+| Ternary hard | 5.57470 | 0.3825% | **0.01332** | **0.85326** |
+| Ternary CAT-Q to hard | 5.57376 | **0.3988%** | 0.01422 | 0.84944 |
+
+The low-bit CE can be slightly lower than the weak FP32 teacher CE because discretization acts as regularization on this synthetic task. That does not mean the low-bit student is more intelligent: teacher KL and hidden cosine still show the information lost relative to the FP32 model.
+
+- [`docs/OFFICIAL_QWEN36_LOCAL_RESULT.md`](docs/OFFICIAL_QWEN36_LOCAL_RESULT.md)
+- [`experiments/official_qwen36_text/results_official_qwen36_local_summary.json`](experiments/official_qwen36_text/results_official_qwen36_local_summary.json)
 
 ## Consolidated PR and method ranking
 

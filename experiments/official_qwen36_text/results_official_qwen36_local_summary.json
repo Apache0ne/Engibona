@@ -14,6 +14,39 @@
     "batch": 8,
     "learning_rate": 0.0007
   },
+  "fp32_teacher_reference": {
+    "precision": "FP32 parameters, activations, training, and evaluation",
+    "overall": {
+      "ce_mean": 5.594067573547363,
+      "ce_pstdev": 0.007082780315479667,
+      "accuracy_mean": 0.00431315106106922,
+      "accuracy_pstdev": 0.0012685919187449847,
+      "teacher_kl": 0.0,
+      "hidden_cosine": 1.0
+    },
+    "by_depth": {
+      "4": {
+        "ce_mean": 5.591562032699585,
+        "ce_pstdev": 0.007188558578491211,
+        "accuracy_mean": 0.003906249883584678,
+        "accuracy_pstdev": 0.0016276041278615594
+      },
+      "8": {
+        "ce_mean": 5.596573114395142,
+        "ce_pstdev": 0.0060083866119384766,
+        "accuracy_mean": 0.0047200522385537624,
+        "accuracy_pstdev": 0.00048828125
+      }
+    }
+  },
+  "aggregate_across_depths_and_seeds": {
+    "binary_naive": {"ce": 5.575437307357788, "accuracy": 0.003417968691792339, "teacher_kl": 0.04553928226232529, "hidden_cosine": 0.5377500653266907},
+    "binary_hard": {"ce": 5.5744781494140625, "accuracy": 0.00358072915696539, "teacher_kl": 0.018386855721473694, "hidden_cosine": 0.7958487719297409},
+    "binary_categorical": {"ce": 5.5745275020599365, "accuracy": 0.0035807292151730508, "teacher_kl": 0.018438083119690418, "hidden_cosine": 0.7904287874698639},
+    "ternary_naive": {"ce": 5.565238356590271, "accuracy": 0.0034993489971384406, "teacher_kl": 0.03134296042844653, "hidden_cosine": 0.6995692700147629},
+    "ternary_hard": {"ce": 5.574702262878418, "accuracy": 0.00382486978196539, "teacher_kl": 0.01331793051213026, "hidden_cosine": 0.8532609045505524},
+    "ternary_catq_hard": {"ce": 5.5737597942352295, "accuracy": 0.003987630247138441, "teacher_kl": 0.014219651697203517, "hidden_cosine": 0.8494370430707932}
+  },
   "selection": {
     "binary_behavior_winner": "binary_hard",
     "ternary_behavior_winner": "ternary_hard",
