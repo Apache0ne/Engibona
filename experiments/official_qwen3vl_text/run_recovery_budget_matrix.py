@@ -53,13 +53,22 @@ def run_seed(
     fp = experiment.TinyOfficialQwen3VL(layers=layers, tied=True)
     experiment.train_teacher(fp, train, teacher_steps, batch)
     teacher = copy.deepcopy(fp).eval()
+    teacher_baseline = experiment.evaluate(teacher, teacher, validation)
     methods = [
         (experiment.QuantMode.BINARY, "hard_ste"),
         (experiment.QuantMode.BINARY, "categorical"),
         (experiment.QuantMode.TERNARY, "hard_ste"),
         (experiment.QuantMode.TERNARY, "auto"),
     ]
-    output = {"seed": seed, "layers": layers, "runs": {}}
+    output = {
+        "seed": seed,
+        "layers": layers,
+        "teacher_baseline": {
+            "ce": teacher_baseline["ce"],
+            "accuracy": teacher_baseline["accuracy"],
+        },
+        "runs": {},
+    }
     for mode, relaxation in methods:
         paired_seed = seed + (
             0 if mode == experiment.QuantMode.BINARY else 700000
@@ -105,6 +114,7 @@ def aggregate(runs: list[dict[str, Any]]) -> dict[str, Any]:
         paths = {
             "teacher_kl": lambda row: row["teacher_kl"],
             "ce": lambda row: row["ce"],
+            "accuracy": lambda row: row["accuracy"],
             "hidden_cosine": lambda row: row["hidden_cosine"],
             "overall_code_change": lambda row: row["code_profile"]["overall_change_fraction"],
             "layer_profile_rmse": lambda row: row["code_profile"]["layer_profile_rmse"],
@@ -114,11 +124,47 @@ def aggregate(runs: list[dict[str, Any]]) -> dict[str, Any]:
         for metric, getter in paths.items():
             values = [float(getter(run["runs"][name])) for run in runs]
             finite = [value for value in values if math.isfinite(value)]
-            output[name][metric + "_mean"] = statistics.mean(finite)
-            output[name][metric + "_pstdev"] = statistics.pstdev(finite)
+            output[name][metric + "_mean"] = (
+                statistics.mean(finite) if finite else float("nan")
+            )
+            output[name][metric + "_pstdev"] = (
+                statistics.pstdev(finite) if finite else float("nan")
+            )
+        output_fidelity = [
+            math.exp(-float(run["runs"][name]["teacher_kl"]))
+            for run in runs
+        ]
+        task_likelihood_retention = [
+            math.exp(
+                float(run["teacher_baseline"]["ce"])
+                - float(run["runs"][name]["ce"])
+            )
+            for run in runs
+        ]
+        output[name]["output_fidelity_proxy_mean"] = statistics.mean(
+            output_fidelity
+        )
+        output[name]["output_fidelity_proxy_pstdev"] = statistics.pstdev(
+            output_fidelity
+        )
+        output[name]["task_likelihood_retention_mean"] = statistics.mean(
+            task_likelihood_retention
+        )
+        output[name]["task_likelihood_retention_pstdev"] = statistics.pstdev(
+            task_likelihood_retention
+        )
         output[name]["all_exact_alphabet"] = all(
             run["runs"][name]["exact_alphabet"] for run in runs
         )
+    return output
+
+
+def aggregate_teacher_baseline(runs: list[dict[str, Any]]) -> dict[str, float]:
+    output = {}
+    for metric in ("ce", "accuracy"):
+        values = [float(run["teacher_baseline"][metric]) for run in runs]
+        output[metric + "_mean"] = statistics.mean(values)
+        output[metric + "_pstdev"] = statistics.pstdev(values)
     return output
 
 
@@ -244,6 +290,7 @@ def main() -> None:
             for steps, learning_rate in budgets
         ],
         "aggregate": summary,
+        "teacher_baseline": aggregate_teacher_baseline(runs),
         "selection": selection(summary, targets),
         "runs": runs,
         "seconds": time.time() - started,
@@ -252,6 +299,7 @@ def main() -> None:
         json.dumps(payload, indent=2, allow_nan=True), encoding="utf-8"
     )
     print(json.dumps({
+        "teacher_baseline": payload["teacher_baseline"],
         "selection": payload["selection"],
         "aggregate": summary,
     }, indent=2, allow_nan=True))
