@@ -19,12 +19,7 @@ def export_packed(
     path: str | Path,
     config: EngibonaConfig,
 ) -> dict[str, Any]:
-    """Export exact packed codes and FP16 scales.
-
-    The default `trained` strategy preserves globally recovered exact hard
-    codes and learned scales. Tied embedding/head modules export identical
-    codebooks, preserving the source architecture's parameter equality.
-    """
+    """Export exact packed codes and FP16 scales."""
     tensors: dict[str, Any] = {}
     supported = (
         GroupQuantizedLinear,
@@ -58,6 +53,7 @@ def export_packed(
             encoding = "ternary_2bit_slots_lsb"
         tensors[name] = {
             "shape": list(codes_cpu.shape),
+            "group_size": int(config.group_size),
             "encoding": encoding,
             "padding_symbols": int(pad),
             "packed_codes": packed.cpu(),

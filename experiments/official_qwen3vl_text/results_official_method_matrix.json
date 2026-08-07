@@ -1,0 +1,622 @@
+{
+  "implementation": "transformers.Qwen3VLTextModel",
+  "arguments": {
+    "seeds": 3,
+    "layers": [
+      2,
+      4
+    ],
+    "teacher_steps": 80,
+    "recovery_steps": 80,
+    "batch": 12,
+    "threads": 4,
+    "output": "official_qwen3vl_method_matrix.json"
+  },
+  "by_depth": {
+    "2": {
+      "runs": [
+        {
+          "seed": 4300,
+          "layers": 2,
+          "methods": {
+            "teacher": {
+              "ce": 4.5913496017456055,
+              "accuracy": 0.03092447854578495,
+              "teacher_kl": 3.5054978928525933e-09,
+              "hidden_cosine": 1.0
+            },
+            "binary_naive": {
+              "ce": 4.7705302238464355,
+              "accuracy": 0.009765625,
+              "teacher_kl": 0.3138095736503601,
+              "hidden_cosine": 0.6003168225288391,
+              "exact_alphabet": true,
+              "zero_ratio": null
+            },
+            "binary_hard": {
+              "ce": 4.494142055511475,
+              "accuracy": 0.02766927145421505,
+              "teacher_kl": 0.17076745629310608,
+              "hidden_cosine": 0.6987758278846741,
+              "exact_alphabet": true,
+              "zero_ratio": null
+            },
+            "binary_categorical": {
+              "ce": 4.505835056304932,
+              "accuracy": 0.02408854104578495,
+              "teacher_kl": 0.18031981587409973,
+              "hidden_cosine": 0.6944040656089783,
+              "exact_alphabet": true,
+              "zero_ratio": null
+            },
+            "ternary_naive": {
+              "ce": 4.6883697509765625,
+              "accuracy": 0.01725260354578495,
+              "teacher_kl": 0.21293409168720245,
+              "hidden_cosine": 0.7540251612663269,
+              "exact_alphabet": true,
+              "zero_ratio": 0.3072395324707031
+            },
+            "ternary_hard": {
+              "ce": 4.525533199310303,
+              "accuracy": 0.02897135354578495,
+              "teacher_kl": 0.12751953303813934,
+              "hidden_cosine": 0.7920432090759277,
+              "exact_alphabet": true,
+              "zero_ratio": 0.294830322265625
+            },
+            "ternary_catq": {
+              "ce": 4.507308483123779,
+              "accuracy": 0.02473958395421505,
+              "teacher_kl": 0.12965378165245056,
+              "hidden_cosine": 0.7952982187271118,
+              "exact_alphabet": true,
+              "zero_ratio": 0.30138397216796875
+            },
+            "ternary_categorical": {
+              "ce": 4.522989273071289,
+              "accuracy": 0.02734375,
+              "teacher_kl": 0.13484349846839905,
+              "hidden_cosine": 0.7883718609809875,
+              "exact_alphabet": true,
+              "zero_ratio": 0.29527854919433594
+            }
+          }
+        },
+        {
+          "seed": 4301,
+          "layers": 2,
+          "methods": {
+            "teacher": {
+              "ce": 4.573690414428711,
+              "accuracy": 0.03125,
+              "teacher_kl": 1.6457222242751692e-09,
+              "hidden_cosine": 1.0
+            },
+            "binary_naive": {
+              "ce": 4.734654903411865,
+              "accuracy": 0.014973958022892475,
+              "teacher_kl": 0.28651124238967896,
+              "hidden_cosine": 0.6115286946296692,
+              "exact_alphabet": true,
+              "zero_ratio": null
+            },
+            "binary_hard": {
+              "ce": 4.464014530181885,
+              "accuracy": 0.02669270895421505,
+              "teacher_kl": 0.16895514726638794,
+              "hidden_cosine": 0.688160240650177,
+              "exact_alphabet": true,
+              "zero_ratio": null
+            },
+            "binary_categorical": {
+              "ce": 4.480937480926514,
+              "accuracy": 0.02473958395421505,
+              "teacher_kl": 0.16424767673015594,
+              "hidden_cosine": 0.6916047930717468,
+              "exact_alphabet": true,
+              "zero_ratio": null
+            },
+            "ternary_naive": {
+              "ce": 4.662402153015137,
+              "accuracy": 0.021484375,
+              "teacher_kl": 0.21063148975372314,
+              "hidden_cosine": 0.7513664364814758,
+              "exact_alphabet": true,
+              "zero_ratio": 0.3071746826171875
+            },
+            "ternary_hard": {
+              "ce": 4.47974157333374,
+              "accuracy": 0.0315755195915699,
+              "teacher_kl": 0.12122062593698502,
+              "hidden_cosine": 0.7912458181381226,
+              "exact_alphabet": true,
+              "zero_ratio": 0.2960948944091797
+            },
+            "ternary_catq": {
+              "ce": 4.480461120605469,
+              "accuracy": 0.033203125,
+              "teacher_kl": 0.12244050949811935,
+              "hidden_cosine": 0.7953762412071228,
+              "exact_alphabet": true,
+              "zero_ratio": 0.30205726623535156
+            },
+            "ternary_categorical": {
+              "ce": 4.4807915687561035,
+              "accuracy": 0.0319010429084301,
+              "teacher_kl": 0.12569531798362732,
+              "hidden_cosine": 0.7859587669372559,
+              "exact_alphabet": true,
+              "zero_ratio": 0.2961406707763672
+            }
+          }
+        },
+        {
+          "seed": 4302,
+          "layers": 2,
+          "methods": {
+            "teacher": {
+              "ce": 4.646993160247803,
+              "accuracy": 0.0384114570915699,
+              "teacher_kl": 3.0252713587588527e-10,
+              "hidden_cosine": 1.0
+            },
+            "binary_naive": {
+              "ce": 4.801070690155029,
+              "accuracy": 0.01627604104578495,
+              "teacher_kl": 0.33314380049705505,
+              "hidden_cosine": 0.5663232207298279,
+              "exact_alphabet": true,
+              "zero_ratio": null
+            },
+            "binary_hard": {
+              "ce": 4.531968116760254,
+              "accuracy": 0.03092447854578495,
+              "teacher_kl": 0.1921975165605545,
+              "hidden_cosine": 0.6597746014595032,
+              "exact_alphabet": true,
+              "zero_ratio": null
+            },
+            "binary_categorical": {
+              "ce": 4.5593132972717285,
+              "accuracy": 0.0345052070915699,
+              "teacher_kl": 0.19057337939739227,
+              "hidden_cosine": 0.6644469499588013,
+              "exact_alphabet": true,
+              "zero_ratio": null
+            },
+            "ternary_naive": {
+              "ce": 4.721358299255371,
+              "accuracy": 0.01725260354578495,
+              "teacher_kl": 0.23070012032985687,
+              "hidden_cosine": 0.7251404523849487,
+              "exact_alphabet": true,
+              "zero_ratio": 0.3073902130126953
+            },
+            "ternary_hard": {
+              "ce": 4.536711692810059,
+              "accuracy": 0.0341796875,
+              "teacher_kl": 0.14131776988506317,
+              "hidden_cosine": 0.7686052322387695,
+              "exact_alphabet": true,
+              "zero_ratio": 0.29662132263183594
+            },
+            "ternary_catq": {
+              "ce": 4.52556037902832,
+              "accuracy": 0.0377604179084301,
+              "teacher_kl": 0.14355409145355225,
+              "hidden_cosine": 0.7724522352218628,
+              "exact_alphabet": true,
+              "zero_ratio": 0.30298805236816406
+            },
+            "ternary_categorical": {
+              "ce": 4.530645370483398,
+              "accuracy": 0.0361328125,
+              "teacher_kl": 0.1449659913778305,
+              "hidden_cosine": 0.7671223878860474,
+              "exact_alphabet": true,
+              "zero_ratio": 0.29753875732421875
+            }
+          }
+        }
+      ],
+      "aggregate": {
+        "teacher": {
+          "ce_mean": 4.603677749633789,
+          "ce_pstdev": 0.03077493738156224,
+          "accuracy_mean": 0.033528645833333336,
+          "accuracy_pstdev": 0.0031335790469631027,
+          "teacher_kl_mean": 1.8179157253624585e-09,
+          "teacher_kl_pstdev": 1.3151093231872746e-09,
+          "hidden_cosine_mean": 1.0,
+          "hidden_cosine_pstdev": 0.0,
+          "all_exact_alphabet": true
+        },
+        "binary_naive": {
+          "ce_mean": 4.768751939137776,
+          "ce_pstdev": 0.027145155158046965,
+          "accuracy_mean": 0.013671874689559141,
+          "accuracy_pstdev": 0.0028128212441736462,
+          "teacher_kl_mean": 0.31115487217903137,
+          "teacher_kl_pstdev": 0.019129684869339074,
+          "hidden_cosine_mean": 0.5927229126294454,
+          "hidden_cosine_pstdev": 0.0192229431745394,
+          "all_exact_alphabet": true
+        },
+        "binary_hard": {
+          "ce_mean": 4.496708234151204,
+          "ce_pstdev": 0.027803290877966246,
+          "accuracy_mean": 0.028428819651405018,
+          "accuracy_pstdev": 0.0018091717381027923,
+          "teacher_kl_mean": 0.17730670670668283,
+          "teacher_kl_pstdev": 0.010554438060986123,
+          "hidden_cosine_mean": 0.682236889998118,
+          "hidden_cosine_pstdev": 0.01646269516443892,
+          "all_exact_alphabet": true
+        },
+        "binary_categorical": {
+          "ce_mean": 4.515361944834392,
+          "ce_pstdev": 0.03269230733701617,
+          "accuracy_mean": 0.027777777363856632,
+          "accuracy_pstdev": 0.004764430520229704,
+          "teacher_kl_mean": 0.17838029066721597,
+          "teacher_kl_pstdev": 0.010834296159720588,
+          "hidden_cosine_mean": 0.6834852695465088,
+          "hidden_cosine_pstdev": 0.0135053896591216,
+          "all_exact_alphabet": true
+        },
+        "ternary_naive": {
+          "ce_mean": 4.690710067749023,
+          "ce_pstdev": 0.02413083560996293,
+          "accuracy_mean": 0.0186631940305233,
+          "accuracy_pstdev": 0.001994876194471413,
+          "teacher_kl_mean": 0.2180885672569275,
+          "teacher_kl_pstdev": 0.00896635243569336,
+          "hidden_cosine_mean": 0.7435106833775839,
+          "hidden_cosine_pstdev": 0.013034593201504043,
+          "all_exact_alphabet": true,
+          "zero_ratio_mean": 0.3072681427001953
+        },
+        "ternary_hard": {
+          "ce_mean": 4.5139954884847,
+          "ce_pstdev": 0.02464880482501776,
+          "accuracy_mean": 0.031575520212451615,
+          "accuracy_pstdev": 0.002126293432973231,
+          "teacher_kl_mean": 0.1300193096200625,
+          "teacher_kl_pstdev": 0.008392063258629973,
+          "hidden_cosine_mean": 0.7839647531509399,
+          "hidden_cosine_pstdev": 0.010866556688497724,
+          "all_exact_alphabet": true,
+          "zero_ratio_mean": 0.2958488464355469
+        },
+        "ternary_catq": {
+          "ce_mean": 4.504443327585856,
+          "ce_pstdev": 0.018521204072422658,
+          "accuracy_mean": 0.031901042287548385,
+          "accuracy_pstdev": 0.005394879903412055,
+          "teacher_kl_mean": 0.13188279420137405,
+          "teacher_kl_pstdev": 0.008761573920793587,
+          "hidden_cosine_mean": 0.7877088189125061,
+          "hidden_cosine_pstdev": 0.010788039311077777,
+          "all_exact_alphabet": true,
+          "zero_ratio_mean": 0.3021430969238281
+        },
+        "ternary_categorical": {
+          "ce_mean": 4.511475404103597,
+          "ce_pstdev": 0.021923839020480403,
+          "accuracy_mean": 0.031792535136143364,
+          "accuracy_pstdev": 0.003588939988326315,
+          "teacher_kl_mean": 0.13516826927661896,
+          "teacher_kl_pstdev": 0.007868985955758639,
+          "hidden_cosine_mean": 0.7804843386014303,
+          "hidden_cosine_pstdev": 0.009499924440974958,
+          "all_exact_alphabet": true,
+          "zero_ratio_mean": 0.29631932576497394
+        }
+      }
+    },
+    "4": {
+      "runs": [
+        {
+          "seed": 4500,
+          "layers": 4,
+          "methods": {
+            "teacher": {
+              "ce": 4.574874401092529,
+              "accuracy": 0.01725260354578495,
+              "teacher_kl": 1.9085324436396436e-09,
+              "hidden_cosine": 1.0
+            },
+            "binary_naive": {
+              "ce": 4.609850883483887,
+              "accuracy": 0.014322916977107525,
+              "teacher_kl": 0.10036899894475937,
+              "hidden_cosine": 0.8464022278785706,
+              "exact_alphabet": true,
+              "zero_ratio": null
+            },
+            "binary_hard": {
+              "ce": 4.468181610107422,
+              "accuracy": 0.01953125,
+              "teacher_kl": 0.044244639575481415,
+              "hidden_cosine": 0.842686653137207,
+              "exact_alphabet": true,
+              "zero_ratio": null
+            },
+            "binary_categorical": {
+              "ce": 4.4565205574035645,
+              "accuracy": 0.025390625,
+              "teacher_kl": 0.04391564801335335,
+              "hidden_cosine": 0.853335440158844,
+              "exact_alphabet": true,
+              "zero_ratio": null
+            },
+            "ternary_naive": {
+              "ce": 4.612110614776611,
+              "accuracy": 0.014973958022892475,
+              "teacher_kl": 0.08799764513969421,
+              "hidden_cosine": 0.9114270806312561,
+              "exact_alphabet": true,
+              "zero_ratio": 0.3072845458984375
+            },
+            "ternary_hard": {
+              "ce": 4.4463276863098145,
+              "accuracy": 0.02115885354578495,
+              "teacher_kl": 0.040229927748441696,
+              "hidden_cosine": 0.8773287534713745,
+              "exact_alphabet": true,
+              "zero_ratio": 0.2963348388671875
+            },
+            "ternary_catq": {
+              "ce": 4.480259895324707,
+              "accuracy": 0.02083333395421505,
+              "teacher_kl": 0.036156609654426575,
+              "hidden_cosine": 0.8939134478569031,
+              "exact_alphabet": true,
+              "zero_ratio": 0.299822998046875
+            },
+            "ternary_categorical": {
+              "ce": 4.4393744468688965,
+              "accuracy": 0.0185546875,
+              "teacher_kl": 0.042581986635923386,
+              "hidden_cosine": 0.8726040720939636,
+              "exact_alphabet": true,
+              "zero_ratio": 0.293377685546875
+            }
+          }
+        },
+        {
+          "seed": 4501,
+          "layers": 4,
+          "methods": {
+            "teacher": {
+              "ce": 4.228812217712402,
+              "accuracy": 0.0205078125,
+              "teacher_kl": 2.390655673201847e-09,
+              "hidden_cosine": 1.0
+            },
+            "binary_naive": {
+              "ce": 4.441932201385498,
+              "accuracy": 0.0244140625,
+              "teacher_kl": 0.1441580206155777,
+              "hidden_cosine": 0.8309022188186646,
+              "exact_alphabet": true,
+              "zero_ratio": null
+            },
+            "binary_hard": {
+              "ce": 4.211827754974365,
+              "accuracy": 0.02473958395421505,
+              "teacher_kl": 0.06624027341604233,
+              "hidden_cosine": 0.8449039459228516,
+              "exact_alphabet": true,
+              "zero_ratio": null
+            },
+            "binary_categorical": {
+              "ce": 4.210869312286377,
+              "accuracy": 0.02278645895421505,
+              "teacher_kl": 0.06527168303728104,
+              "hidden_cosine": 0.8406471014022827,
+              "exact_alphabet": true,
+              "zero_ratio": null
+            },
+            "ternary_naive": {
+              "ce": 4.417212009429932,
+              "accuracy": 0.02311197854578495,
+              "teacher_kl": 0.11228647083044052,
+              "hidden_cosine": 0.9035121202468872,
+              "exact_alphabet": true,
+              "zero_ratio": 0.307196044921875
+            },
+            "ternary_hard": {
+              "ce": 4.212790489196777,
+              "accuracy": 0.025390625,
+              "teacher_kl": 0.05013253167271614,
+              "hidden_cosine": 0.8787331581115723,
+              "exact_alphabet": true,
+              "zero_ratio": 0.29612935384114586
+            },
+            "ternary_catq": {
+              "ce": 4.238260269165039,
+              "accuracy": 0.02701822854578495,
+              "teacher_kl": 0.04609180614352226,
+              "hidden_cosine": 0.8901842832565308,
+              "exact_alphabet": true,
+              "zero_ratio": 0.30007832845052085
+            },
+            "ternary_categorical": {
+              "ce": 4.212703704833984,
+              "accuracy": 0.0263671875,
+              "teacher_kl": 0.05652088671922684,
+              "hidden_cosine": 0.8738727569580078,
+              "exact_alphabet": true,
+              "zero_ratio": 0.2938771565755208
+            }
+          }
+        },
+        {
+          "seed": 4502,
+          "layers": 4,
+          "methods": {
+            "teacher": {
+              "ce": 4.290331840515137,
+              "accuracy": 0.02799479104578495,
+              "teacher_kl": 2.1573904882548063e-09,
+              "hidden_cosine": 1.0
+            },
+            "binary_naive": {
+              "ce": 4.379528522491455,
+              "accuracy": 0.0224609375,
+              "teacher_kl": 0.11596886068582535,
+              "hidden_cosine": 0.848881185054779,
+              "exact_alphabet": true,
+              "zero_ratio": null
+            },
+            "binary_hard": {
+              "ce": 4.117954254150391,
+              "accuracy": 0.02734375,
+              "teacher_kl": 0.052732326090335846,
+              "hidden_cosine": 0.8572173714637756,
+              "exact_alphabet": true,
+              "zero_ratio": null
+            },
+            "binary_categorical": {
+              "ce": 4.121335983276367,
+              "accuracy": 0.0315755195915699,
+              "teacher_kl": 0.0547863133251667,
+              "hidden_cosine": 0.8577285408973694,
+              "exact_alphabet": true,
+              "zero_ratio": null
+            },
+            "ternary_naive": {
+              "ce": 4.363687515258789,
+              "accuracy": 0.0263671875,
+              "teacher_kl": 0.10028784722089767,
+              "hidden_cosine": 0.9139919281005859,
+              "exact_alphabet": true,
+              "zero_ratio": 0.30720621744791665
+            },
+            "ternary_hard": {
+              "ce": 4.129098415374756,
+              "accuracy": 0.0325520820915699,
+              "teacher_kl": 0.04308770224452019,
+              "hidden_cosine": 0.8837725520133972,
+              "exact_alphabet": true,
+              "zero_ratio": 0.2942708333333333
+            },
+            "ternary_catq": {
+              "ce": 4.147586822509766,
+              "accuracy": 0.02897135354578495,
+              "teacher_kl": 0.04172869026660919,
+              "hidden_cosine": 0.8981313109397888,
+              "exact_alphabet": true,
+              "zero_ratio": 0.2983652750651042
+            },
+            "ternary_categorical": {
+              "ce": 4.098588466644287,
+              "accuracy": 0.02799479104578495,
+              "teacher_kl": 0.05698639154434204,
+              "hidden_cosine": 0.88215172290802,
+              "exact_alphabet": true,
+              "zero_ratio": 0.2920450846354167
+            }
+          }
+        }
+      ],
+      "aggregate": {
+        "teacher": {
+          "ce_mean": 4.364672819773356,
+          "ce_pstdev": 0.14874475877429347,
+          "accuracy_mean": 0.021918402363856632,
+          "accuracy_pstdev": 0.0034586319995078703,
+          "teacher_kl_mean": 2.1521928683654323e-09,
+          "teacher_kl_pstdev": 1.744278879543559e-10,
+          "hidden_cosine_mean": 1.0,
+          "hidden_cosine_pstdev": 0.0,
+          "all_exact_alphabet": true
+        },
+        "binary_naive": {
+          "ce_mean": 4.47710386912028,
+          "ce_pstdev": 0.09726035493615931,
+          "accuracy_mean": 0.020399305659035843,
+          "accuracy_pstdev": 0.004370015169829212,
+          "teacher_kl_mean": 0.12016529341538747,
+          "teacher_kl_pstdev": 0.018125356536165687,
+          "hidden_cosine_mean": 0.8420618772506714,
+          "hidden_cosine_pstdev": 0.007954074722988981,
+          "all_exact_alphabet": true
+        },
+        "binary_hard": {
+          "ce_mean": 4.265987873077393,
+          "ce_pstdev": 0.14802035209458428,
+          "accuracy_mean": 0.02387152798473835,
+          "accuracy_pstdev": 0.0032479665368871542,
+          "teacher_kl_mean": 0.054405746360619865,
+          "teacher_kl_pstdev": 0.009060871796594943,
+          "hidden_cosine_mean": 0.8482693235079447,
+          "hidden_cosine_pstdev": 0.006385290786696707,
+          "all_exact_alphabet": true
+        },
+        "binary_categorical": {
+          "ce_mean": 4.2629086176554365,
+          "ce_pstdev": 0.1416956446640303,
+          "accuracy_mean": 0.026584201181928318,
+          "accuracy_pstdev": 0.003686042575113591,
+          "teacher_kl_mean": 0.054657881458600364,
+          "teacher_kl_pstdev": 0.008722525524845932,
+          "hidden_cosine_mean": 0.8505703608194987,
+          "hidden_cosine_pstdev": 0.007242016487354637,
+          "all_exact_alphabet": true
+        },
+        "ternary_naive": {
+          "ce_mean": 4.46433671315511,
+          "ce_pstdev": 0.10674891497195306,
+          "accuracy_mean": 0.021484374689559143,
+          "accuracy_pstdev": 0.004791536998647288,
+          "teacher_kl_mean": 0.1001906543970108,
+          "teacher_kl_pstdev": 0.009917043109888203,
+          "hidden_cosine_mean": 0.9096437096595764,
+          "hidden_cosine_pstdev": 0.004460224263765471,
+          "all_exact_alphabet": true,
+          "zero_ratio_mean": 0.3072289360894097
+        },
+        "ternary_hard": {
+          "ce_mean": 4.262738863627116,
+          "ce_pstdev": 0.13423615073051276,
+          "accuracy_mean": 0.026367186879118282,
+          "accuracy_pstdev": 0.0047022454920979005,
+          "teacher_kl_mean": 0.04448338722189268,
+          "teacher_kl_pstdev": 0.00416418424919556,
+          "hidden_cosine_mean": 0.8799448211987814,
+          "hidden_cosine_pstdev": 0.0027684976673413254,
+          "all_exact_alphabet": true,
+          "zero_ratio_mean": 0.2955783420138889
+        },
+        "ternary_catq": {
+          "ce_mean": 4.288702328999837,
+          "ce_pstdev": 0.14041585522222805,
+          "accuracy_mean": 0.025607638681928318,
+          "accuracy_pstdev": 0.0034688291532067117,
+          "teacher_kl_mean": 0.04132570202151934,
+          "teacher_kl_pstdev": 0.004066660275513182,
+          "hidden_cosine_mean": 0.8940763473510742,
+          "hidden_cosine_pstdev": 0.0032483710514131627,
+          "all_exact_alphabet": true,
+          "zero_ratio_mean": 0.29942220052083335
+        },
+        "ternary_categorical": {
+          "ce_mean": 4.250222206115723,
+          "ce_pstdev": 0.14162717458452773,
+          "accuracy_mean": 0.024305555348594982,
+          "accuracy_pstdev": 0.004120407268265728,
+          "teacher_kl_mean": 0.05202975496649742,
+          "teacher_kl_pstdev": 0.00668772491244653,
+          "hidden_cosine_mean": 0.8762095173199972,
+          "hidden_cosine_pstdev": 0.004235057864675578,
+          "all_exact_alphabet": true,
+          "zero_ratio_mean": 0.2930999755859375
+        }
+      }
+    }
+  },
+  "seconds": 123.7886118888855
+}

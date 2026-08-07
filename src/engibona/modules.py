@@ -226,11 +226,122 @@ class GroupQuantizedLinear(_GroupedQuantState):
 
 
 class GroupQuantizedEmbedding(_GroupedQuantState):
+    """Embedding with release-matched binary/ternary code policies."""
+
     def __init__(self, source: nn.Embedding, config: EngibonaConfig) -> None:
         super().__init__(source.weight, config)
         self.num_embeddings = source.num_embeddings
         self.embedding_dim = source.embedding_dim
         self.padding_idx = source.padding_idx
+        initial_groups, _ = group_last_dim(
+            source.weight.detach().float(), self.config.group_size
+        )
+        self.register_buffer(
+            "initial_sign_groups",
+            torch.where(initial_groups >= 0, 1.0, -1.0),
+            persistent=True,
+        )
+        if (
+            self.config.mode == QuantMode.BINARY
+            and self.config.binary_embedding_strategy == "frozen_ptq"
+        ) or (
+            self.config.mode == QuantMode.TERNARY
+            and self.config.ternary_embedding_strategy == "frozen_ptq"
+        ):
+            for parameter in self.parameters():
+                parameter.requires_grad_(False)
+
+    def _sign_locked(self) -> bool:
+        return (
+            self.config.mode == QuantMode.TERNARY
+            and self.config.ternary_embedding_strategy == "sign_locked_recovery"
+        )
+
+    def hard_codes_and_scales(
+        self,
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        groups, layout = group_last_dim(
+            self.latent_weight, self.config.group_size
+        )
+        scales = self._scales()
+        normalized, threshold = self._assignment(groups, scales)
+        if self._sign_locked():
+            codes = self.initial_sign_groups * (
+                normalized.abs() > threshold
+            ).to(normalized.dtype)
+        else:
+            codes = hard_codes(
+                normalized,
+                self.config.mode,
+                threshold=threshold
+                if self.config.mode == QuantMode.TERNARY
+                else 0.5,
+            )
+        return (
+            ungroup_last_dim(codes, layout).to(torch.int8),
+            scales.to(torch.float16),
+            ungroup_last_dim(scales[..., None] * codes, layout),
+        )
+
+    def _surrogate(self) -> torch.Tensor:
+        frozen = (
+            self.config.mode == QuantMode.BINARY
+            and self.config.binary_embedding_strategy == "frozen_ptq"
+        ) or (
+            self.config.mode == QuantMode.TERNARY
+            and self.config.ternary_embedding_strategy == "frozen_ptq"
+        )
+        if frozen:
+            return self.hard_codes_and_scales()[2]
+        if not self._sign_locked():
+            return super()._surrogate()
+
+        groups, layout = group_last_dim(
+            self.latent_weight, self.config.group_size
+        )
+        scales = self._scales()
+        normalized, threshold = self._assignment(groups, scales)
+        progress = self.step / max(self.total_steps - 1, 1)
+        method = self.config.relaxation
+        if method == "auto":
+            method = "catq"
+        hard_now = (
+            method == "hard_ste"
+            or progress >= self.config.hard_recovery_start
+        )
+        if hard_now:
+            codes = self.initial_sign_groups * (
+                normalized.abs() > threshold
+            ).to(normalized.dtype)
+            hard = ungroup_last_dim(scales[..., None] * codes, layout)
+            return hard_ste_weight(self.latent_weight, hard)
+
+        temperature = hessian_guided_temperature(
+            self.step,
+            self.total_steps,
+            self.config.initial_temperature,
+            self.sensitivity,
+            self.config.sensitivity_alpha,
+            self.config.compression_fraction,
+            self.config.final_temperature,
+        ).to(groups.device, groups.dtype)
+        if method == "catq":
+            sharpness = max(1.0e-3, 1.0 + 29.0 * progress)
+            magnitude = catq_ternary_relaxation(
+                normalized.abs(), sharpness, threshold
+            ).clamp(0.0, 1.0)
+        else:
+            magnitude = categorical_relaxation(
+                normalized.abs(), QuantMode.TERNARY, temperature
+            ).abs().clamp(0.0, 1.0)
+        codes = self.initial_sign_groups * magnitude
+        soft = ungroup_last_dim(scales[..., None] * codes, layout)
+        pressure = compression_pressure(
+            self.step,
+            self.total_steps,
+            self.config.compression_fraction,
+        )
+        return effective_weight(self.latent_weight, soft, pressure)
 
     def forward(self, input_ids: torch.Tensor) -> torch.Tensor:
         return F.embedding(

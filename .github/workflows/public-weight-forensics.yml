@@ -1,0 +1,43 @@
+name: public-weight-forensics
+
+on:
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - name: Install CPU analysis dependencies
+        run: |
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu torch
+          python -m pip install safetensors huggingface_hub requests numpy pandas
+      - name: Show available storage
+        run: df -h
+      - name: Stream Qwen and public Bonsai weights
+        run: |
+          python experiments/public_bonsai_forensics/run_streaming_weight_forensics_tied.py \
+            --group-size 128 \
+            --groups-per-tensor 2048 \
+            --seed 1337 \
+            --output-dir public_bonsai_forensics
+      - name: Tensor-cluster confidence intervals
+        run: |
+          python experiments/public_bonsai_forensics/summarize_confidence.py \
+            --input public_bonsai_forensics/tensor_metrics.csv \
+            --output public_bonsai_forensics/confidence_intervals.json \
+            --iterations 4000
+      - name: Show final storage
+        if: always()
+        run: df -h
+      - uses: actions/upload-artifact@v4
+        with:
+          name: public-bonsai-forensics
+          path: public_bonsai_forensics
+          if-no-files-found: error
